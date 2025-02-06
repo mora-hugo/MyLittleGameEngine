@@ -1,0 +1,44 @@
+# Ignore les fichiers de configuration de l'IDE CLion
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore les fichiers de build de CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Ignore les fichiers de sortie des builds
+bin/
+build/
+out/
+obj/
+
+# Ignore les fichiers d'exécution
+*.exe
+*.out
+*.app
+*.dSYM/
+
+# Ignore les fichiers de compilation intermédiaire
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.dll
+*.exp
+*.pdb
+
+# Ignore les logs et fichiers temporaires
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Ignore les fichiers spécifiques à certains systèmes
+.DS_Store
+Thumbs.db
