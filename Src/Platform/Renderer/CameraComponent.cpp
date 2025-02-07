@@ -7,9 +7,6 @@
 #include "Singleton.h"
 #include "App.h"
 
-HC::CameraComponent::CameraComponent() {
-
-}
 
 
 
@@ -34,7 +31,7 @@ glm::mat4 HC::CameraComponent::GetViewMatrix() const {
 }
 
 glm::mat4 HC::CameraComponent::GetProjectionMatrix() const {
-    return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
 }
 
 void HC::CameraComponent::OnWindowResizeEvent(const glm::vec2 &size) {

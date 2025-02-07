@@ -2,13 +2,14 @@
 #include "imgui.h"
 #include "Utils/Time.h"
 #include "imgui_internal.h"
-#include "Renderer/Renderer.h"
 #include "Viewport.h"
 #include "Scenes/SceneManager.h"
 #include "App.h"
-#include "Singleton.h"
-#include "Components/RendererComponent.h"
 #include "Components/CameraComponent.h"
+#include "glm/gtc/type_ptr.hpp"
+
+
+HC::Entity* selectedEntity = nullptr;
 
 void HC::DefaultAttachableIMGUIWindow::Draw() {
     static bool dockspaceOpen = true;
@@ -37,7 +38,6 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
         ImGui::PopStyleVar(2);
     }
 
-    // Créer le DockSpace et récupérer son ID
     ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
@@ -50,36 +50,29 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
 
         if (ImGui::BeginMenu("Layouts")) {
             if (ImGui::MenuItem("Reset")) {
-                firstTime = true; // Force la reconstruction du DockSpace
+                firstTime = true;
             }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
 
-    ImGui::End(); // Fin DockSpace
+    ImGui::End();
 
-    // ----------------------
-    // RESET du DockSpace
-    // ----------------------
     if (firstTime) {
         firstTime = false;
 
-        // Reset du layout
         ImGui::LoadIniSettingsFromMemory("");
 
-        // Supprimer l'ancien DockSpace et recréer proprement
         ImGui::DockBuilderRemoveNode(dockspace_id);
         ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
         ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
 
-        // Créer des DockIDs
         ImGuiID dock_main_id = dockspace_id;
         ImGuiID dock_left = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.2f, nullptr, &dock_main_id);
         ImGuiID dock_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
         ImGuiID dock_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.2f, nullptr, &dock_main_id);
 
-        // Assigner chaque fenêtre à un dock
         ImGui::DockBuilderDockWindow("Scene Hierarchy", dock_left);
         ImGui::DockBuilderDockWindow("Inspector", dock_right);
         ImGui::DockBuilderDockWindow("Console", dock_bottom);
@@ -88,27 +81,79 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
         ImGui::DockBuilderFinish(dockspace_id);
     }
 
-    // ----------------------
-    // Fenêtres de l'éditeur
-    // ----------------------
-
     ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
     ImGui::Begin("Scene Hierarchy");
-    if(ImGui::Button("+")) {
+
+    if (ImGui::Button("+")) {
         auto entitycreationTest = std::make_unique<Entity>("New Entity");
         SceneManager::GetInstance()->GetCurrentScene()->AddEntity(std::move(entitycreationTest));
-
     }
-    if(SceneManager::GetInstance()->GetCurrentScene()) {
-        for(auto& entity : SceneManager::GetInstance()->GetCurrentScene()->GetEntities()) {
-            ImGui::Text(" - %s", entity->GetName().c_str());
+
+    if (SceneManager::GetInstance()->GetCurrentScene()) {
+        for (auto& entity : SceneManager::GetInstance()->GetCurrentScene()->GetEntities()) {
+            bool isSelected = (selectedEntity == entity.get());
+
+            if (ImGui::Selectable(entity->GetName().c_str(), isSelected)) {
+                selectedEntity = entity.get();
+            }
         }
     }
+
     ImGui::End();
 
     ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
     ImGui::Begin("Inspector");
-    ImGui::Text("Propriétés de l’objet sélectionné...");
+
+    if (selectedEntity) {
+        static char nameBuffer[256];
+
+        std::strncpy(nameBuffer, selectedEntity->GetName().c_str(), sizeof(nameBuffer));
+        nameBuffer[sizeof(nameBuffer) - 1] = '\0';
+
+        if (ImGui::InputText("Entity Name", nameBuffer, sizeof(nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
+            selectedEntity->SetName(nameBuffer);
+        }
+
+        selectedEntity->ExecuteOnComponents<Component>([](Component* component) {
+            ImGui::Separator();
+            ImGui::Text("%s", component->GetClassName());
+
+            for (auto& member : component->GetMembers()) {
+                ImGui::Text("-- %s", member.first);
+                auto non_const_property = const_cast<Property&>(member.second);
+
+                if (non_const_property.Is<float>()) {
+                    float* value = non_const_property.GetPropertyPtr<float>();
+                    if (value) {
+                        ImGui::DragFloat(member.first, value, 0.1f);
+                    }
+                } else if (non_const_property.Is<int>()) {
+                    int* value = non_const_property.GetPropertyPtr<int>();
+                    if (value) {
+                        ImGui::DragInt(member.first, value);
+                    }
+                }
+                else if (non_const_property.Is<glm::vec2>()) {
+                    glm::vec2* value = non_const_property.GetPropertyPtr<glm::vec2>();
+                    if (value) {
+                        ImGui::DragFloat2(member.first, glm::value_ptr(*value), 0.1f);
+                    }
+                }
+                else if (member.second.Is<glm::vec3>()) {
+                    glm::vec3* value = non_const_property.GetPropertyPtr<glm::vec3>();
+                    if (value) {
+                        ImGui::DragFloat3(member.first, glm::value_ptr(*value), 0.1f);
+                    }
+                }
+                else {
+                    ImGui::Text("Non-editable type");
+                }
+            }
+        });
+    } else {
+        ImGui::Text("No entity selected.");
+    }
+
     ImGui::End();
 
     ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
@@ -121,14 +166,14 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
     ImVec2 size = ImGui::GetContentRegionAvail();
     glm::vec2 pos = glm::vec2(ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y);
 
-    if(Viewport::GetGameViewportSize() != glm::vec2(size.x, size.y) || bWindowStateDirty == true) {
+    if (Viewport::GetGameViewportSize() != glm::vec2(size.x, size.y) || bWindowStateDirty == true) {
         bWindowStateDirty = false;
         Viewport::SetGameViewportSize({size.x, size.y});
     }
 
     ImGui::Image((void*)(intptr_t)renderTextureId, size, ImVec2(0, 1), ImVec2(1, 0));
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    glm::vec2 textPos = pos + glm::vec2(10, 10);// 10 pixels de marge à gauche et en haut
+    glm::vec2 textPos = pos + glm::vec2(10, 10);
     auto formatedText = "FPS: " + std::to_string(currentFPS);
     drawList->AddText(ImVec2(textPos.x, textPos.y), IM_COL32(255, 255, 255, 255), formatedText.c_str());
     ImGui::End();

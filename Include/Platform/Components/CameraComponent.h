@@ -4,11 +4,14 @@
 #include "glm/glm.hpp"
 #include "ECS/Component.h"
 #include "Event/ReadOnlyEvent.h"
-
+#include "Reflection/ReflexionMacro.h"
+#include "Reflection/IReflectable.h"
 namespace HC {
     class CameraComponent : public Component {
+    private:
+        static constexpr const char* ClassName = "CameraComponent";
     public:
-        explicit CameraComponent();
+        explicit CameraComponent() : Component(ClassName) {}
         ~CameraComponent() override;
         void Initialize();
         void Update(float deltaTime) override;
@@ -25,8 +28,19 @@ namespace HC {
 
     private:
         float aspectRatio;
-        float zoom;
-        glm::vec2 windowSize {0.0f, 0.0f};
+        float zoom = 0;
+        float fov = 45.0f;
+        float nearPlane = 0.1f;
+        float farPlane = 100.0f;
 
+        glm::vec2 windowSize {0.0f, 0.0f};
+    START_REFLECTION()
+         ADD_MEMBER_PROPERTY(aspectRatio)
+         ADD_MEMBER_PROPERTY(zoom)
+         ADD_MEMBER_PROPERTY(fov)
+         ADD_MEMBER_PROPERTY(nearPlane)
+         ADD_MEMBER_PROPERTY(farPlane)
+    STOP_REFLECTION()
+    public: \
     };
 }

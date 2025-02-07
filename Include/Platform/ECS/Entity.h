@@ -11,6 +11,10 @@ namespace HC {
         explicit Entity(const char* name) : name(name) { }
         virtual ~Entity() = default;
 
+        void SetName(const std::string& name) {
+            this->name = name;
+        }
+
         std::string &GetName() {
             return name;
         }

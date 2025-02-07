@@ -6,7 +6,7 @@
 #include "ECS/Entity.h"
 
 
-HC::RendererComponent::RendererComponent() {
+HC::RendererComponent::RendererComponent() : Component(ClassName) {
 
 
 

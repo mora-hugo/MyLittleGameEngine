@@ -7,7 +7,10 @@
 
 namespace HC {
     class PlayerControllerComponent : public Component {
+    private:
+        static constexpr const char* ClassName = "PlayerControllerComponent";
     public:
+        PlayerControllerComponent() : Component(ClassName) {}
         ~PlayerControllerComponent() override;
 
     public:
@@ -29,5 +32,10 @@ namespace HC {
         glm::vec2 lastMousePosition {0.0f, 0.0f};
         float moveSpeed = 1.0f;
         float mouseSensitivity = 001.f;
+
+        START_REFLECTION()
+            ADD_MEMBER_PROPERTY(moveSpeed)
+            ADD_MEMBER_PROPERTY(mouseSensitivity)
+        STOP_REFLECTION()
     };
 }

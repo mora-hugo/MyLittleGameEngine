@@ -1,12 +1,15 @@
 #pragma once
 
 #include <typeindex>
+#include "Reflection/Class.h"
+#include "Reflection/ReflexionMacro.h"
 namespace HC {
     class Entity;
 
-    class Component {
+    class Component : public Class{
     public:
         virtual ~Component() = default;
+        Component(const char* name) : Class(name) {}
         void Initialize() {}
         virtual void BeginPlay() {}
         virtual void EndPlay() {}

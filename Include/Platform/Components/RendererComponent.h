@@ -12,6 +12,7 @@
 
 namespace HC {
     class RendererComponent : public Component {
+        static constexpr const char* ClassName = "RendererComponent";
     public:
         RendererComponent();
         void Initialize(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<ShaderProgram> shaderProgram);
@@ -29,6 +30,9 @@ namespace HC {
         static constexpr const char* PROJECTION_MATRIX_LOCATION = "u_ProjectionMatrix";
         static constexpr const char* VIEW_MATRIX_LOCATION = "u_ViewMatrix";
         static constexpr const char* MODEL_MATRIX_LOCATION = "u_ModelMatrix";
+
+        START_REFLECTION()
+        STOP_REFLECTION()
     };
 
 }

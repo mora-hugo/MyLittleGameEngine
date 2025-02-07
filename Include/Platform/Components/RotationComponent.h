@@ -8,7 +8,10 @@
 
 namespace HC {
     class RotationComponent : public Component {
+    private:
+        static constexpr const char* ClassName = "RotationComponent";
     public:
+        RotationComponent() : Component(ClassName) {}
         void Initialize(float newSpeed, const glm::vec3& newRotationAxis) {
             speed = newSpeed;
             rotationAxis = newRotationAxis;
@@ -21,5 +24,9 @@ namespace HC {
     private:
         float speed = 0.0f;
         glm::vec3 rotationAxis = glm::vec3(0.0f);
+
+        START_REFLECTION()
+            ADD_MEMBER_PROPERTY(speed)
+        STOP_REFLECTION()
     };
 }
