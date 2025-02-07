@@ -1,4 +1,5 @@
 #include "Renderer/Renderer.h"
+#include "GLFW/glfw3.h"
 
 void HC::Renderer::Clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -47,3 +48,6 @@ void HC::Renderer::SetDepthBufferEnabled(bool bEnabled) {
 void HC::Renderer::SetViewport(int x, int y, int width, int height) {
     glViewport(x, y, width, height);
 }
+
+
+

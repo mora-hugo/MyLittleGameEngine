@@ -18,6 +18,10 @@ namespace HC {
 
         void SetRotation(const glm::vec3 &newRotation) {
             rotation = newRotation;
+            rotation.x = std::fmod(rotation.x, 360.0f);
+            rotation.y = std::fmod(rotation.y, 360.0f);
+            rotation.z = std::fmod(rotation.z, 360.0f);
+
         }
 
         void SetScale(const glm::vec3 &newScale) {

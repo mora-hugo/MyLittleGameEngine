@@ -1,6 +1,9 @@
 #pragma once
 
+#include <memory>
 #include "GameLayer.h"
+#include "Renderer/Buffers/FrameBuffer.h"
+#include "Viewport.h"
 
 namespace HC {
     class EditorLayer : public GameLayer {
@@ -14,8 +17,10 @@ namespace HC {
         void EndPlay() override;
 
 
-#if HC_EDITOR == 0
         void DrawImGui_Internal();
-#endif
+
+    private:
+        std::unique_ptr<FrameBuffer> frameBuffer;
+        std::unique_ptr<Viewport> viewport;
     };
 }

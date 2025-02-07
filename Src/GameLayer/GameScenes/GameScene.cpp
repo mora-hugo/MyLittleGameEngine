@@ -65,7 +65,7 @@ void HC::GameScene::BeginPlay() {
                                                  RESOURCES_PATH"/Shaders/fragment.glsl");
 
     auto entity = std::make_unique<Entity>("Camera");
-    entity->AddComponent<CameraComponent>(App::GetInstance()->GetWindowSize(), App::GetInstance()->GetWindow()->OnWindowResize);
+    entity->AddComponent<CameraComponent>();
     entity->AddComponent<TransformComponent>();
     entity->GetComponent<TransformComponent>()->SetPosition({0.0f, 0.0f, -3.0f});
     entity->AddComponent<PlayerControllerComponent>(10.0f);

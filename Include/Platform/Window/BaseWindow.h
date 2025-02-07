@@ -12,7 +12,7 @@ namespace HC {
     public:
 
         BaseWindow(int width, int height, const std::string &windowName);
-        ~BaseWindow() = default;
+        virtual ~BaseWindow() = default;
 
         BaseWindow(const BaseWindow&) = delete;
         virtual BaseWindow &operator=(const BaseWindow&) = delete;

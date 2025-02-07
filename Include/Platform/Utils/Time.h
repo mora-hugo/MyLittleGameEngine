@@ -11,6 +11,14 @@ namespace HC {
             return smoothedDeltaTime;
         }
 
+        static float GetFPS() {
+            return 1.0f / deltaTime;
+        }
+
+        static float GetSmoothFPS() {
+            return 1.0f / smoothedDeltaTime;
+        }
+
         static void SetDeltaTime(float newDeltaTime) {
             deltaTime = newDeltaTime;
             ComputeSmoothDeltaTime();

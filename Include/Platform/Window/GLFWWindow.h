@@ -10,7 +10,11 @@
 #include "Utils/ShaderUtils.h"
 
 namespace HC {
-    class GLFWWindow : public BaseWindow, public IImGUIWindow  {
+    class GLFWWindow : public BaseWindow
+#if defined(HC_EDITOR)
+            , public IImGUIWindow
+#endif
+                    {
     public:
         GLFWWindow(int width, int height, const std::string &windowName);
         ~GLFWWindow() override;
@@ -27,17 +31,18 @@ namespace HC {
 
         void SwapBuffers() const override;
 
-
+#if defined(HC_EDITOR)
         void ImGUIFrameBegin() override;
         void ImGUIRender()  override;
-
+#endif
 
 
     private:
+#if defined(HC_EDITOR)
         void InitializeIMGUI()  override;
         void AttachIMGUIWindow(std::shared_ptr<AttachableIMGUIWindow> imguiWindow) override;
         void DetachIMGUIWindow(std::shared_ptr<AttachableIMGUIWindow> imguiWindow) override;
-
+#endif
         /* GLFW Callbacks */
         static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
         static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -46,9 +51,16 @@ namespace HC {
 
         void InitializeGLFW(int width, int height, const std::string &windowName);
         void SetCallbacks();
+
+
+
     private:
         GLFWwindow * window;
+#if defined(HC_EDITOR)
         std::unordered_set<std::shared_ptr<AttachableIMGUIWindow>> imguiWindows;
+#endif
+    private:
+
     };
 
 } // HC

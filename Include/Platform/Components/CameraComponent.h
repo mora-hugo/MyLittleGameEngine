@@ -10,7 +10,7 @@ namespace HC {
     public:
         explicit CameraComponent();
         ~CameraComponent() override;
-        void Initialize(const glm::vec2& defaultWindowSize, Event<glm::vec2> &onWindowResize);
+        void Initialize();
         void Update(float deltaTime) override;
 
         [[nodiscard]] glm::mat4 GetViewMatrix() const;

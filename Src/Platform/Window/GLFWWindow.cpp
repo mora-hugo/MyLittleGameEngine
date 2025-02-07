@@ -46,8 +46,9 @@ namespace HC {
             std::cerr << "OpenGL ERROR: Impossible to load opengl !" << std::endl;
         }
 
-        glfwSwapInterval(1);
+        //glfwSwapInterval(1);
         glfwSetWindowUserPointer(window, this);
+
     }
 
     void GLFWWindow::SetCallbacks() {
@@ -66,13 +67,14 @@ namespace HC {
 
         glViewport(0, 0, width, height);
     }
-
+#if defined(HC_EDITOR)
     void GLFWWindow::InitializeIMGUI() {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
         ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -100,6 +102,7 @@ namespace HC {
 
 
     }
+#endif
 
     void GLFWWindow::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto *vp_window = static_cast<GLFWWindow*>(glfwGetWindowUserPointer(window));
@@ -147,7 +150,7 @@ namespace HC {
     void GLFWWindow::SwapBuffers() const {
         glfwSwapBuffers(window);
     }
-
+#if defined(HC_EDITOR)
     void GLFWWindow::AttachIMGUIWindow(std::shared_ptr<AttachableIMGUIWindow> imguiWindow) {
         imguiWindows.insert(imguiWindow);
     }
@@ -156,4 +159,9 @@ namespace HC {
         imguiWindows.erase(imguiWindow);
     }
 
+
+
+
+
+#endif
 } // HC

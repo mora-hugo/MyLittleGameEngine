@@ -20,6 +20,8 @@ namespace HC {
         Renderer::SetViewport(0,0, GetWindowSize().x, GetWindowSize().y);
         Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
+
+
         SceneManager::GetInstance()->ChangeScene(std::move(std::make_unique<GameScene>("GameScene2")));
     }
 

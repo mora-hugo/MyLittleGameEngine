@@ -4,7 +4,8 @@
 #include "ECS/Entity.h"
 #include "Components/TransformComponent.h"
 #include "Renderer/Renderer.h"
-
+#include "Singleton.h"
+#include "App.h"
 
 HC::CameraComponent::CameraComponent() {
 
@@ -13,9 +14,11 @@ HC::CameraComponent::CameraComponent() {
 
 
 
-void HC::CameraComponent::Initialize(const glm::vec2& defaultWindowSize, Event<glm::vec2> &onWindowResize) {
-    windowSize = defaultWindowSize;
-    OnWindowResizePtr = std::make_unique<ReadOnlyEvent<glm::vec2>>(onWindowResize);
+void HC::CameraComponent::Initialize() {
+    windowSize = App::GetInstance()->GetWindow()->GetWindowSize();
+
+    OnWindowResizePtr = std::make_unique<ReadOnlyEvent<glm::vec2>>(App::GetInstance()->GetWindow()->OnWindowResize);
+
     aspectRatio = windowSize.x / windowSize.y;
     BindEvents();
 }
@@ -44,7 +47,9 @@ void HC::CameraComponent::BindEvents() {
 }
 
 void HC::CameraComponent::UnbindEvents() {
+
     OnWindowResizePtr->RemoveListener(this);
+
 }
 
 HC::CameraComponent::~CameraComponent() {

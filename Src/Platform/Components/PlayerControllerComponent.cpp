@@ -70,6 +70,9 @@ bool HC::PlayerControllerComponent::IsCursorHidden() const {
 }
 
 void HC::PlayerControllerComponent::OnKeyPressed(const HC::KeyboardInput &keyboardInput) {
+    if(keyboardInput.key == GLFW_KEY_SPACE) {
+        std::cout << "FPS : " << 1.0f / Time::GetDeltaTime() << std::endl;
+    }
     if (keyboardInput.key == GLFW_KEY_F) {
         SetCursorHidden(!IsCursorHidden());
     }

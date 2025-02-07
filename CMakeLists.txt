@@ -22,8 +22,11 @@ target_compile_definitions(GameEngine PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOU
 
 target_compile_options(GameEngine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
 
-#uncomment to disable the editor
-#add_compile_definitions(HC_EDITOR)
+#comment to disable the editor
+
+
+add_compile_definitions(HC_EDITOR)
+
 
 #add the include directory to the project
 target_include_directories(GameEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include/GameLayer)

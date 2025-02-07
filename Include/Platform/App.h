@@ -21,7 +21,7 @@ namespace HC {
 
     private:
         std::unique_ptr<BaseWindow> window;
-#if HC_EDITOR == 0
+#if defined(HC_EDITOR)
         std::unique_ptr<EditorLayer> gameLayer;
 #else
         std::unique_ptr<GameLayer> gameLayer;

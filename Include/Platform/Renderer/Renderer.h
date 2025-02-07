@@ -32,6 +32,7 @@ namespace HC {
         static glm::mat4 GetProjectionMatrix() { return projectionMatrix; }
         static glm::mat4 GetViewMatrix() { return viewMatrix; }
 
+
     private:
 
 

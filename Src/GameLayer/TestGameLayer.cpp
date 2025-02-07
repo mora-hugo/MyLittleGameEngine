@@ -81,7 +81,7 @@ void HC::TestGameLayer::BeginPlay() {
 
     auto scene = std::make_unique<Scene>("Scene 1");
     auto entity = std::make_unique<Entity>("");
-    entity->AddComponent<CameraComponent>(GetWindowSize(), App::GetInstance()->GetWindow()->OnWindowResize);
+    entity->AddComponent<CameraComponent>();
     entity->AddComponent<TransformComponent>();
     entity->GetComponent<TransformComponent>()->SetPosition({0.0f, 0.0f, -3.0f});
 
