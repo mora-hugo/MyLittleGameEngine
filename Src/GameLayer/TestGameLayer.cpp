@@ -18,7 +18,7 @@
 #include "AttachableWindows/SceneManagerWindow.h"
 #include <iostream>
 
-HC::TestGameLayer::TestGameLayer(App *app) : GameLayer(app) {
+HC::TestGameLayer::TestGameLayer() : GameLayer() {
 
 }
 
@@ -30,18 +30,20 @@ void HC::TestGameLayer::BeginPlay() {
 
     GameLayer::BeginPlay();
 
+    Input::ListenKey(GLFW_KEY_Z);
+    Input::ListenKey(GLFW_KEY_S);
+
     Input::ListenKey(GLFW_KEY_UP);
     Input::ListenKey(GLFW_KEY_DOWN);
     Input::ListenKey(GLFW_KEY_LEFT);
     Input::ListenKey(GLFW_KEY_RIGHT);
+
     Input::GetKeyboardEventPressed().AddListener(this,
                                                 HC_BIND_MEMBER_FUNCTION_ARGS(&TestGameLayer::InputKeyboardCallback,
                                                                              this, 1));
 
 
-    Renderer::SetDepthBufferEnabled(true);
-    Renderer::SetViewport(0,0, GetWindowSize().x, GetWindowSize().y);
-    Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
+
 
     std::vector<Vertex> vertices = {
             // Face avant
@@ -78,8 +80,8 @@ void HC::TestGameLayer::BeginPlay() {
     };
 
     auto scene = std::make_unique<Scene>("Scene 1");
-    auto entity = std::make_unique<Entity>();
-    entity->AddComponent<CameraComponent>(GetWindowSize(), GetApp()->GetWindow()->OnWindowResize);
+    auto entity = std::make_unique<Entity>("");
+    entity->AddComponent<CameraComponent>(GetWindowSize(), App::GetInstance()->GetWindow()->OnWindowResize);
     entity->AddComponent<TransformComponent>();
     entity->GetComponent<TransformComponent>()->SetPosition({0.0f, 0.0f, -3.0f});
 
@@ -90,7 +92,7 @@ void HC::TestGameLayer::BeginPlay() {
     auto shaderProgram = ShaderUtils::LoadShader(RESOURCES_PATH"/Shaders/vertex.glsl",
                                                  RESOURCES_PATH"/Shaders/fragment.glsl");
     // ------------
-    entity = std::make_unique<Entity>();
+    entity = std::make_unique<Entity>("");
     entity->AddComponent<TransformComponent>();
     entity->GetComponent<TransformComponent>()->SetPosition({-1.0f, 0.0f, -3.0f});
     entity->AddComponent<RendererComponent>(vertices, indices, shaderProgram);
@@ -99,7 +101,7 @@ void HC::TestGameLayer::BeginPlay() {
     scene->AddEntity(std::move(entity));
 
     // ------------
-    entity = std::make_unique<Entity>();
+    entity = std::make_unique<Entity>("");
     entity->AddComponent<TransformComponent>();
     entity->GetComponent<TransformComponent>()->SetPosition({1.0f, 0.0f, -3.0f});
     entity->AddComponent<RendererComponent>(vertices, indices, shaderProgram);
@@ -111,24 +113,17 @@ void HC::TestGameLayer::BeginPlay() {
 
 
 
-    imguiWindow = std::make_shared<DefaultAttachableIMGUIWindow>("Default Window");
+    //imguiWindow = std::make_shared<DefaultAttachableIMGUIWindow>("Default Window");
 
-    auto* imGUIInterface = Interface::GetInterface<IImGUIWindow>(GetApp()->GetWindow());
-    if(imGUIInterface) {
-        imGUIInterface->AttachIMGUIWindow(imguiWindow);
-        imGUIInterface->AttachIMGUIWindow(std::make_shared<SceneManagerWindow>());
-    }
+
 }
 
 void HC::TestGameLayer::Update(float deltaTime) {
-    Renderer::ResetMatrixDirtyFlags();
     GameLayer::Update(deltaTime);
-    SceneManager::GetInstance()->Update(deltaTime);
 }
 
 void HC::TestGameLayer::Draw() {
     Renderer::Clear();
-    SceneManager::GetInstance()->Draw();
 }
 
 void HC::TestGameLayer::EndPlay() {

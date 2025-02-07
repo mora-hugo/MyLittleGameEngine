@@ -2,6 +2,7 @@
 
 #include "Interface.h"
 #include "Window/AttachableIMGUIWindow.h"
+#include <memory>
 class IImGUIWindow : public Interface {
 public:
     ~IImGUIWindow() override = default;

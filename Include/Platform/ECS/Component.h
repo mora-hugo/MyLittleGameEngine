@@ -1,4 +1,6 @@
 #pragma once
+
+#include <typeindex>
 namespace HC {
     class Entity;
 
@@ -12,6 +14,7 @@ namespace HC {
         virtual void Update(float deltaTime) {}
 
         void RegisterEntity(Entity* owner) { entity = owner; }
+
 
     private:
         Entity* entity = nullptr;

@@ -18,7 +18,7 @@ int HC::App::Run() {
 
         gameLayer->Draw();
 
-#if REMOVE_IMGUI == 0
+#if HC_EDITOR == 0
         gameLayer->DrawImGui_Internal();
 #endif
         window->SwapBuffers();
@@ -33,7 +33,11 @@ HC::App::App() {
     std::string windowName;
     Assertion(Config && Config->GetValue<int>("window_width", windowSize.x) && Config->GetValue<int>("window_height", windowSize.y) && Config->GetValue("window_name", windowName), "Failed to load window parameters from config");
     CreateWindow(windowSize, windowName);
-    gameLayer = std::make_unique<TestGameLayer>(this);
+#if HC_EDITOR == 0
+    gameLayer = std::make_unique<EditorLayer>();
+#else
+    gameLayer = std::make_unique<GameLayer>();
+#endif
     inputManager = std::make_unique<InputManager>(*GetWindow());
     Input::Initialize(inputManager.get());
 }

@@ -7,6 +7,5 @@
 int main() {
 
 
-    HC::App app;
-    return app.Run();
+    return HC::App::GetInstance()->Run();
 }

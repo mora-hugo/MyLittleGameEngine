@@ -3,7 +3,7 @@
 namespace HC {
     class GameLayer {
     public:
-        explicit GameLayer(class App* appContext);
+        explicit GameLayer();
         virtual ~GameLayer() = default;
 
         GameLayer(const GameLayer&) = delete;
@@ -17,15 +17,9 @@ namespace HC {
         virtual void EndPlay();
 
         [[nodiscard]] glm::vec2 GetWindowSize() const;
-        [[nodiscard]] App* GetApp() const;
 
-#if REMOVE_IMGUI == 0
-        void DrawImGui_Internal();
-
-#endif
 
     private:
-        class App* app;
 
 
     };

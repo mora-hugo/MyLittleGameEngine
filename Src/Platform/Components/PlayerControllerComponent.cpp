@@ -20,8 +20,9 @@ void HC::PlayerControllerComponent::Initialize(float speed) {
 }
 
 void HC::PlayerControllerComponent::BindEvents() {
-    Input::GetKeyboardEventRepeat().AddListener(this, HC_BIND_MEMBER_FUNCTION_ARGS(&PlayerControllerComponent::OnKeyRepeat, this, 1));
     Input::GetKeyboardEventPressed().AddListener(this, HC_BIND_MEMBER_FUNCTION_ARGS(&PlayerControllerComponent::OnKeyPressed, this, 1));
+    Input::GetKeyboardEventRepeat().AddListener(this, HC_BIND_MEMBER_FUNCTION_ARGS(&PlayerControllerComponent::OnKeyRepeat, this, 1));
+
 }
 
 void HC::PlayerControllerComponent::UnbindEvents() {

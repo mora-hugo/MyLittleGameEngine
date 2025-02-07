@@ -22,6 +22,7 @@ namespace HC {
         void BindEvents();
         void UnbindEvents();
         void OnWindowResizeEvent(const glm::vec2 &size);
+
     private:
         float aspectRatio;
         float zoom;

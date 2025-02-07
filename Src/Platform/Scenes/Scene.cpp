@@ -38,6 +38,9 @@ void HC::Scene::EndPlay() {
 }
 
 void HC::Scene::AddEntity(std::unique_ptr<Entity> entity) {
+    entity->ExecuteOnComponents<Component>([](Component* comp) {
+            comp->BeginPlay();
+        });
     entities.emplace(std::move(entity));
 }
 

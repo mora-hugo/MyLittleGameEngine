@@ -17,7 +17,7 @@ namespace HC {
 
     class TestGameLayer : public GameLayer {
     public:
-        TestGameLayer(App* app);
+        TestGameLayer();
         ~TestGameLayer() override;
 
         void BeginPlay() override;
@@ -30,6 +30,6 @@ namespace HC {
         void InputKeyboardCallback(const KeyboardInput& input);
     private:
         std::unique_ptr<Scene> lastScene;
-        std::shared_ptr<DefaultAttachableIMGUIWindow> imguiWindow;
+        //std::shared_ptr<DefaultAttachableIMGUIWindow> imguiWindow;
     };
 }

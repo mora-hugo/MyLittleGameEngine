@@ -16,6 +16,10 @@ namespace HC {
         void AddEntity(std::unique_ptr<Entity> entity);
         void RemoveEntity(Entity* entity);
 
+        std::unordered_set<std::unique_ptr<Entity>>& GetEntities() {
+            return entities;
+        }
+
         std::string GetName() const {
             return name;
         }

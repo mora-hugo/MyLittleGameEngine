@@ -7,6 +7,14 @@
 namespace HC {
     class Entity {
     public:
+
+        explicit Entity(const char* name) : name(name) { }
+        virtual ~Entity() = default;
+
+        std::string &GetName() {
+            return name;
+        }
+
         template <typename T, typename... Args>
         T* AddComponent(Args&&... args) {
             auto type = std::type_index(typeid(T));
@@ -49,5 +57,7 @@ namespace HC {
 
     private:
         std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
+
+        std::string name;
     };
 }

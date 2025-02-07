@@ -2,12 +2,13 @@
 
 #include <memory>
 #include <chrono>
+#include "EditorLayer.h"
 #include "Inputs/InputManager.h"
 
 namespace HC {
     class BaseWindow;
     class GameLayer;
-    class App {
+    class App : public Singleton<App> {
     public:
         App();
         ~App();
@@ -20,7 +21,11 @@ namespace HC {
 
     private:
         std::unique_ptr<BaseWindow> window;
+#if HC_EDITOR == 0
+        std::unique_ptr<EditorLayer> gameLayer;
+#else
         std::unique_ptr<GameLayer> gameLayer;
+#endif
         std::unique_ptr<InputManager> inputManager;
 
         /* Delta time */
