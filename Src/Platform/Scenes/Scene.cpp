@@ -7,33 +7,42 @@ HC::Scene::Scene(const char *sceneName) : name(sceneName) {
 
 void HC::Scene::BeginPlay() {
     for(auto& entity : entities) {
-        entity->ExecuteOnComponents<Component>([](Component* comp) {
-            comp->BeginPlay();
-        });
+        entity->ExecuteOnChildrensRecursive([](Entity* entity, int depth) {
+            entity->ExecuteOnComponents<Component>([](Component* comp) {
+                comp->BeginPlay();
+            });
+        }, true);
     }
 }
 
 void HC::Scene::Update(float deltaTime) {
     for(auto& entity : entities) {
-        entity->ExecuteOnComponents<Component>([deltaTime](Component* component) {
-            component->Update(deltaTime);
-        });
+        entity->ExecuteOnChildrensRecursive([deltaTime](Entity* entity, int depth) {
+            entity->ExecuteOnComponents<Component>([deltaTime](Component* comp) {
+                comp->Update(deltaTime);
+            });
+        }, true);
+
     }
 }
 
 void HC::Scene::Draw() {
     for(auto& entity : entities) {
-        entity->ExecuteOnComponents<RendererComponent>([](RendererComponent* comp) {
-            comp->Draw();
-        });
+        entity->ExecuteOnChildrensRecursive([](Entity* entity, int depth) {
+            entity->ExecuteOnComponents<RendererComponent>([](RendererComponent* renderer) {
+                renderer->Draw();
+            });
+        }, true);
     }
 }
 
 void HC::Scene::EndPlay() {
     for(auto& entity : entities) {
-        entity->ExecuteOnComponents<Component>([](Component* comp) {
-            comp->EndPlay();
-        });
+        entity->ExecuteOnChildrensRecursive([](Entity* entity, int depth) {
+            entity->ExecuteOnComponents<Component>([](Component* comp) {
+                comp->EndPlay();
+            });
+        }, true);
     }
 }
 

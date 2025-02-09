@@ -36,7 +36,7 @@ namespace HC::Editor {
         void Draw() override {
             float* value = property.GetPropertyPtr<float>();
             if (value) {
-                if (ImGui::DragFloat(property.propertyName, value)) {
+                if (ImGui::DragFloat(property.propertyName, value, 0.1f)) {
                     InternalOnValueChanged.Invoke();
                 }
             }
@@ -58,7 +58,7 @@ namespace HC::Editor {
         void Draw() override {
             glm::vec2* value = property.GetPropertyPtr<glm::vec2>();
             if (value) {
-                if (ImGui::DragFloat2(property.propertyName, glm::value_ptr(*value))) {
+                if (ImGui::DragFloat2(property.propertyName, glm::value_ptr(*value), 0.1f)) {
                     InternalOnValueChanged.Invoke();
                 }
             }
@@ -78,11 +78,10 @@ namespace HC::Editor {
 
         }
         ~Vec3InspectorProperty() = default;
-
         void Draw() override {
             glm::vec3* value = property.GetPropertyPtr<glm::vec3>();
             if (value) {
-                if (ImGui::DragFloat3(property.propertyName, glm::value_ptr(*value))) {
+                if (ImGui::DragFloat3(property.propertyName, glm::value_ptr(*value), 0.1f)) {
                     InternalOnValueChanged.Invoke();
                 }
             }

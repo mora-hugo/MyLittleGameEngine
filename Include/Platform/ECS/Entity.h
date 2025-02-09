@@ -21,6 +21,9 @@ namespace HC {
             return name;
         }
 
+        Entity* GetParent() const {
+            return parent;
+        }
         template <typename T>
         T* AddComponent() {
             auto type = T::StaticClass();
@@ -66,8 +69,6 @@ namespace HC {
             }
         }
 
-
-
         template <typename T, typename Func>
         void ExecuteOnComponents(Func&& func) {
             std::vector<Component*> componentValues;
@@ -85,12 +86,61 @@ namespace HC {
             }
         }
 
+        void ExecuteOnChildrens(std::function<void(Entity*, int depth)> func, bool includingSelf = true) {
+            if (includingSelf) {
+                func(this, 0);
+            }
+
+            for (auto& child : childrens) {
+                func(child.get(), 1);
+            }
+        }
+
+        void ExecuteOnChildrensRecursive(std::function<void(Entity*, int depth)> func, bool includingSelf = true) {
+            ExecuteWorkerRecursive(func, this, 0, includingSelf);
+        }
+
+        void AddChild(std::unique_ptr<Entity> child) {
+            child->parent = this;
+            childrens.push_back(std::move(child));
+        }
+
+        bool RemoveChild(Entity* child) {
+            for (auto it = childrens.begin(); it != childrens.end(); ++it) {
+                if (it->get() == child) {
+                    childrens.erase(it);
+                    return true;
+                }
+            }
+
+            for (auto& childEntity : childrens) {
+                if (childEntity->RemoveChild(child)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+    private:
+
+        void ExecuteWorkerRecursive(std::function<void(Entity*, int)> func, Entity* entity, int depth, bool includingSelf) {
+            if (includingSelf) {
+                func(entity, depth);
+            }
+
+            for (auto& child : entity->childrens) {
+                ExecuteWorkerRecursive(func, child.get(), depth + 1, true);
+            }
+        }
 
 
 
 
     private:
+        Entity* parent = nullptr;
         std::map<HCClass*, std::unique_ptr<Component>> components;
+        std::vector<std::unique_ptr<Entity>> childrens;
         std::string name;
     };
 }
