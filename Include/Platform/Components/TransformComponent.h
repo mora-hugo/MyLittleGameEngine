@@ -5,14 +5,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 namespace HC {
     class TransformComponent : public Component {
-    private:
-        static constexpr const char* ClassName = "TransformComponent";
     public:
-        TransformComponent() : Component(ClassName) {}
-        void Initialize(const glm::vec3 &defaultPosition = glm::vec3{0.0f}, const glm::vec3 &defaultRotation = glm::vec3{0.0f}, const glm::vec3 &defaultScale = glm::vec3{0.0f}) {
-            SetPosition(position);
-            SetRotation(rotation);
-            SetScale(scale);
+        TransformComponent() : Component() {}
+        void Initialize() override {
         }
 
         void SetPosition(const glm::vec3 &newPosition) {
@@ -59,8 +54,7 @@ namespace HC {
             modelMatrix = glm::scale(modelMatrix, GetScale());
             return modelMatrix;
         }
-
-        START_REFLECTION()
+        START_REFLECTION(TransformComponent, Component)
             ADD_MEMBER_PROPERTY(position)
             ADD_MEMBER_PROPERTY(rotation)
             ADD_MEMBER_PROPERTY(scale)

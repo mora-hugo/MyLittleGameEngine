@@ -197,6 +197,7 @@ namespace HC {
             return resource;
         }
 
+
         bool Unload(const std::string& filepath) {
             auto it = resources.find(filepath);
             if (it != resources.end()) {

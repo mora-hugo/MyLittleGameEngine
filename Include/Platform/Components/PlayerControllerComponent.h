@@ -7,14 +7,12 @@
 
 namespace HC {
     class PlayerControllerComponent : public Component {
-    private:
-        static constexpr const char* ClassName = "PlayerControllerComponent";
     public:
-        PlayerControllerComponent() : Component(ClassName) {}
+        PlayerControllerComponent() : Component() {}
         ~PlayerControllerComponent() override;
 
     public:
-        void Initialize(float speed = 1.0f);
+        void Initialize() override;
 
     protected:
         void Move(const glm::vec3 &direction, float amount = 1.0f);
@@ -33,9 +31,9 @@ namespace HC {
         float moveSpeed = 1.0f;
         float mouseSensitivity = 001.f;
 
-        START_REFLECTION()
+        START_REFLECTION(PlayerControllerComponent, Component)
             ADD_MEMBER_PROPERTY(moveSpeed)
             ADD_MEMBER_PROPERTY(mouseSensitivity)
         STOP_REFLECTION()
     };
-}
+         }

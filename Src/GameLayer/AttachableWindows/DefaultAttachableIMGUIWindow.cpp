@@ -7,6 +7,8 @@
 #include "App.h"
 #include "Components/CameraComponent.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "Scenes/SceneResource.h"
+#include "Components/TransformComponent.h"
 
 
 HC::Entity* selectedEntity = nullptr;
@@ -45,6 +47,12 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
 
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Save Scene")) {
+                SaveCurrentSceneToJson(RESOURCES_PATH"/Scenes/Scene1.json");
+            }
+            if (ImGui::MenuItem("Load Scene")) {
+                LoadSceneFromJson(RESOURCES_PATH"/Scenes/Scene1.json");
+            }
             ImGui::EndMenu();
         }
 
@@ -86,6 +94,7 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
 
     if (ImGui::Button("+")) {
         auto entitycreationTest = std::make_unique<Entity>("New Entity");
+        entitycreationTest->AddComponent<TransformComponent>();
         SceneManager::GetInstance()->GetCurrentScene()->AddEntity(std::move(entitycreationTest));
     }
 
@@ -113,11 +122,22 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
         if (ImGui::InputText("Entity Name", nameBuffer, sizeof(nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue)) {
             selectedEntity->SetName(nameBuffer);
         }
-
-        selectedEntity->ExecuteOnComponents<Component>([](Component* component) {
+        bool bComponentDeleted = false;
+        selectedEntity->ExecuteOnComponents<Component>([&](Component* component) {
             ImGui::Separator();
-            ImGui::Text("%s", component->GetClassName());
 
+            ImGui::Text("%s", component->Class()->GetClassName());
+
+            ImGui::SameLine();
+            std::string buttonLabel = "x##" + std::string(component->Class()->GetClassName());
+            if (ImGui::Button(buttonLabel.c_str())) {
+                selectedEntity->RemoveComponent(component->Class());
+                bComponentDeleted = true;
+                return;
+            }
+
+
+            ImGui::Text("Component: ");
             for (auto& member : component->GetMembers()) {
                 ImGui::Text("-- %s", member.first);
                 auto non_const_property = const_cast<Property&>(member.second);
@@ -150,6 +170,16 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
                 }
             }
         });
+
+        if (ImGui::BeginCombo("Add Component", "Select Component")) {
+            for (auto& derivedClass : HCClass::GetDerivedClasses(Component::StaticClass())) {
+                if (ImGui::Selectable(derivedClass->GetClassName())) {
+                    selectedEntity->AddComponent(derivedClass);
+                }
+            }
+            ImGui::EndCombo();
+        }
+
     } else {
         ImGui::Text("No entity selected.");
     }
@@ -185,4 +215,29 @@ HC::DefaultAttachableIMGUIWindow::DefaultAttachableIMGUIWindow(GLuint renderText
 
 void HC::DefaultAttachableIMGUIWindow::OnWindowResize(const glm::vec2 &size) {
     bWindowStateDirty = true;
+}
+
+void HC::DefaultAttachableIMGUIWindow::SaveCurrentSceneToJson(const std::string &path) {
+    auto currentScene = SceneManager::GetInstance()->GetCurrentScene();
+    Assertion(currentScene != nullptr, "No scene is currently loaded.");
+
+
+    auto json = ResourceManager::GetInstance()->Load<SceneResource>(path);
+    json->sceneName = currentScene->GetName();
+    for (auto& entity : currentScene->GetEntities()) {
+        auto newEntity = std::make_unique<Entity>(entity->GetName().c_str());
+        json->entities.push_back(std::move(newEntity));
+    }
+    json->Save();
+}
+
+void HC::DefaultAttachableIMGUIWindow::LoadSceneFromJson(const std::string &path) {
+    auto json = ResourceManager::GetInstance()->Load<SceneResource>(path);
+    Assertion(json != nullptr, "Failed to load scene from path:" + path);
+
+    auto scene = std::make_unique<Scene>(json->sceneName.c_str());
+    for (auto& entity : json->entities) {
+        scene->AddEntity(std::move(entity));
+    }
+    SceneManager::GetInstance()->ChangeScene(std::move(scene));
 }

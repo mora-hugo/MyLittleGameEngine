@@ -29,6 +29,8 @@ namespace HC {
         Renderer::ResetMatrixDirtyFlags();
         Time::SetDeltaTime(deltaTime);
         SceneManager::GetInstance()->Update(deltaTime);
+        //TODO: Camera not removed bc matrix are reset before components update and for now
+        // delete logic is made in the draw function
     }
 
     void GameLayer::EndPlay() {

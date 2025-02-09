@@ -51,6 +51,9 @@ void HC::CameraComponent::UnbindEvents() {
 
 HC::CameraComponent::~CameraComponent() {
     UnbindEvents();
+    // Reset the projection and view matrix
+    Renderer::SetProjectionMatrix({});
+    Renderer::SetViewMatrix({});
 }
 
 

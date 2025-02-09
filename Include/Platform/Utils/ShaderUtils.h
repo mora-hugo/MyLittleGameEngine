@@ -13,6 +13,7 @@
 
             Assertion(vertexShaderResource != nullptr && fragmentShaderResource != nullptr, "Shader not loaded");
 
+            //TODO
             auto shaderProgram = std::make_shared<ShaderProgram>(vertexShaderResource->GetShader(), fragmentShaderResource->GetShader());
 
             ResourceManager::GetInstance()->Unload(vertexShaderPath);

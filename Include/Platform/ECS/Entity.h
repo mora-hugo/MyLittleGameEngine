@@ -3,6 +3,8 @@
 #include <memory>
 #include <typeindex>
 #include "Component.h"
+#include "Utils/PtrUtils.h"
+#include "Assertion.h"
 
 namespace HC {
     class Entity {
@@ -19,22 +21,33 @@ namespace HC {
             return name;
         }
 
-        template <typename T, typename... Args>
-        T* AddComponent(Args&&... args) {
-            auto type = std::type_index(typeid(T));
-            auto component = std::make_unique<T>();
+        template <typename T>
+        T* AddComponent() {
+            auto type = T::StaticClass();
+            auto component = PtrUtils::static_unique_pointer_cast<T,HCObject>(T::StaticClass()->CreateInstance());
+            Assertion(component != nullptr, "Template type is not a component");
             component->RegisterEntity(this);
-            component->Initialize(std::forward<Args>(args)...);
+            component->Initialize();
 
             components[type] = std::move(component);
 
             return static_cast<T*>(components[type].get());
         }
 
+        Component* AddComponent(HCClass* componentClass) {
+            auto component = PtrUtils::static_unique_pointer_cast<Component,HCObject>(componentClass->CreateInstance());
+            Assertion(component != nullptr, "Template type is not a component");
+            component->RegisterEntity(this);
+            component->Initialize();
+
+            components[componentClass] = std::move(component);
+
+            return components[componentClass].get();
+        }
+
         template <typename T>
         T* GetComponent() const {
-            auto type = std::type_index(typeid(T));
-            auto it = components.find(type);
+            auto it = components.find(T::StaticClass());
             if (it != components.end()) {
                 return static_cast<T*>(it->second.get());
             }
@@ -43,13 +56,30 @@ namespace HC {
 
         template <typename T>
         bool HasComponent() const {
-            return components.find(std::type_index(typeid(T))) != components.end();
+            return components.find(T::StaticClass()) != components.end();
         }
+
+        void RemoveComponent(HCClass* componentClass) {
+            auto it = components.find(componentClass);
+            if (it != components.end()) {
+                components.erase(it);
+            }
+        }
+
+
 
         template <typename T, typename Func>
         void ExecuteOnComponents(Func&& func) {
+            std::vector<Component*> componentValues;
             for (auto& [type, component] : components) {
-                if (T* castedComponent = dynamic_cast<T*>(component.get())) {
+                componentValues.push_back(component.get());
+            }
+
+            for (auto& component : componentValues) {
+                if (!component) {
+                    return;
+                }
+                if (T* castedComponent = dynamic_cast<T*>(component)) {
                     func(castedComponent);
                 }
             }
@@ -60,7 +90,7 @@ namespace HC {
 
 
     private:
-        std::unordered_map<std::type_index, std::unique_ptr<Component>> components;
+        std::unordered_map<HCClass*, std::unique_ptr<Component>> components;
 
         std::string name;
     };

@@ -1,16 +1,17 @@
 #pragma once
 
 #include <typeindex>
-#include "Reflection/Class.h"
+#include "Reflection/HCClass.h"
 #include "Reflection/ReflexionMacro.h"
+
 namespace HC {
     class Entity;
+    class Component : public HCObject {
 
-    class Component : public Class{
     public:
-        virtual ~Component() = default;
-        Component(const char* name) : Class(name) {}
-        void Initialize() {}
+        Component() {}
+        virtual ~Component();
+        virtual void Initialize() = 0;
         virtual void BeginPlay() {}
         virtual void EndPlay() {}
         [[nodiscard]] Entity* GetEntity() const { return entity; }
@@ -19,7 +20,13 @@ namespace HC {
         void RegisterEntity(Entity* owner) { entity = owner; }
 
 
+
     private:
         Entity* entity = nullptr;
+
+        START_REFLECTION(Component)
+
+        STOP_REFLECTION()
     };
+
 }

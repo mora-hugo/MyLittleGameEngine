@@ -9,11 +9,10 @@
 namespace HC {
     class CameraComponent : public Component {
     private:
-        static constexpr const char* ClassName = "CameraComponent";
     public:
-        explicit CameraComponent() : Component(ClassName) {}
+        explicit CameraComponent() : Component() {}
         ~CameraComponent() override;
-        void Initialize();
+        void Initialize() override;
         void Update(float deltaTime) override;
 
         [[nodiscard]] glm::mat4 GetViewMatrix() const;
@@ -34,13 +33,15 @@ namespace HC {
         float farPlane = 100.0f;
 
         glm::vec2 windowSize {0.0f, 0.0f};
-    START_REFLECTION()
+
+    START_REFLECTION(CameraComponent, Component)
          ADD_MEMBER_PROPERTY(aspectRatio)
          ADD_MEMBER_PROPERTY(zoom)
          ADD_MEMBER_PROPERTY(fov)
          ADD_MEMBER_PROPERTY(nearPlane)
          ADD_MEMBER_PROPERTY(farPlane)
     STOP_REFLECTION()
+
     public: \
     };
 }

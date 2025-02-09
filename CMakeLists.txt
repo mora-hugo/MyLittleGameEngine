@@ -7,6 +7,7 @@ add_subdirectory(Thirdparty/stb_image)			#loading immaged
 add_subdirectory(Thirdparty/stb_truetype)		#loading ttf files
 add_subdirectory(Thirdparty/glm)				#math
 add_subdirectory(Thirdparty/imgui-docking)		#gui
+add_subdirectory(Thirdparty/json-3.11.3)		#json
 
 project(GameEngine)
 
@@ -34,7 +35,6 @@ target_include_directories(GameEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include
 target_include_directories(GameEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include/Editor)
 
 #add the third party libraries to the project
-target_link_libraries(GameEngine imgui glad glfw stb_image stb_truetype glm)
-
+target_link_libraries(GameEngine imgui glad glfw stb_image stb_truetype glm nlohmann_json::nlohmann_json)
 
 

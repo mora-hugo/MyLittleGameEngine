@@ -12,9 +12,7 @@ void HC::PlayerControllerComponent::Move(const glm::vec3 &direction, float amoun
     }
 }
 
-void HC::PlayerControllerComponent::Initialize(float speed) {
-    Component::Initialize();
-    moveSpeed = speed;
+void HC::PlayerControllerComponent::Initialize() {
     BindEvents();
 
 }

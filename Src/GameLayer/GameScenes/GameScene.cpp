@@ -27,58 +27,21 @@ void HC::GameScene::BeginPlay() {
     Input::ListenKey(GLFW_KEY_LEFT);
     Input::ListenKey(GLFW_KEY_RIGHT);
 
-    std::vector<Vertex> vertices = {
-            // Face avant
-            {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}}, // 0
-            {{ 0.5f, -0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}}, // 1
-            {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}}, // 2
-            {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}}, // 3
-
-            // Face arrière
-            {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}, // 4
-            {{ 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 1.0f}}, // 5
-            {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}}, // 6
-            {{-0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f}}  // 7
-    };
-
-    std::vector<unsigned int> indices = {
-            // Face avant
-            0, 1, 2,  2, 3, 0,
-
-            // Face arrière
-            4, 5, 6,  6, 7, 4,
-
-            // Face gauche
-            4, 0, 3,  3, 7, 4,
-
-            // Face droite
-            1, 5, 6,  6, 2, 1,
-
-            // Face haut
-            3, 2, 6,  6, 7, 3,
-
-            // Face bas
-            4, 5, 1,  1, 0, 4
-    };
-
-    auto shaderProgram = ShaderUtils::LoadShader(RESOURCES_PATH"/Shaders/vertex.glsl",
-                                                 RESOURCES_PATH"/Shaders/fragment.glsl");
-
-    auto entity = std::make_unique<Entity>("Camera");
-    entity->AddComponent<CameraComponent>();
-    entity->AddComponent<TransformComponent>();
-    entity->GetComponent<TransformComponent>()->SetPosition({0.0f, 0.0f, -3.0f});
-    entity->AddComponent<PlayerControllerComponent>(10.0f);
 
 
-    AddEntity(std::move(entity));
 
     // ------------
-    entity = std::make_unique<Entity>("First cube");
+    auto entity = std::make_unique<Entity>("First cube");
     entity->AddComponent<TransformComponent>();
-    entity->GetComponent<TransformComponent>()->SetPosition({1.0f, 0.0f, -3.0f});
-    entity->AddComponent<RendererComponent>(vertices, indices, shaderProgram);
-    entity->AddComponent<RotationComponent>(100.0f, glm::vec3(0.01f, 1.0f, 0.0f));
+    entity->GetComponent<TransformComponent>()->SetPosition({-1.0f, 0.0f, -3.0f});
+    entity->AddComponent<RendererComponent>();
+    entity->AddComponent<RotationComponent>();
+    AddEntity(std::move(entity));
+
+    entity = std::make_unique<Entity>("First cube2");
+    entity->AddComponent<TransformComponent>();
+    entity->GetComponent<TransformComponent>()->SetPosition({-1.5f, 0.0f, -3.0f});
+    entity->AddComponent(RendererComponent::StaticClass());
 
     AddEntity(std::move(entity));
 }

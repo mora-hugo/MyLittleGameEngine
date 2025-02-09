@@ -92,6 +92,7 @@ void HC::TestGameLayer::BeginPlay() {
     auto shaderProgram = ShaderUtils::LoadShader(RESOURCES_PATH"/Shaders/vertex.glsl",
                                                  RESOURCES_PATH"/Shaders/fragment.glsl");
     // ------------
+    /*
     entity = std::make_unique<Entity>("");
     entity->AddComponent<TransformComponent>();
     entity->GetComponent<TransformComponent>()->SetPosition({-1.0f, 0.0f, -3.0f});
@@ -109,6 +110,7 @@ void HC::TestGameLayer::BeginPlay() {
 
     scene->AddEntity(std::move(entity));
 
+     */
     SceneManager::GetInstance()->ChangeScene(std::move(scene));
 
 

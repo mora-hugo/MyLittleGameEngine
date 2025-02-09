@@ -17,6 +17,9 @@ namespace HC {
         void Draw() override;
 
     private:
+        void SaveCurrentSceneToJson(const std::string& path);
+        void LoadSceneFromJson(const std::string& path);
+    private:
         ImGuiID dock_main_id;
         ImGuiID dock_left;
         ImGuiID dock_right;
