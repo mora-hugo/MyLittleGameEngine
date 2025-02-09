@@ -7,6 +7,7 @@
 #include "AttachableWindows/DefaultAttachableIMGUIWindows.h"
 #include "Window/GLFWWindow.h"
 #include "Renderer/Renderer.h"
+#include "Viewport/InspectorProperties/DefaultInspectorProperties.h"
 
 HC::EditorLayer::EditorLayer() {
 

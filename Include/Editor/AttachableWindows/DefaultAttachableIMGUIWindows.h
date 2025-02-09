@@ -5,8 +5,9 @@
 #include "glad/glad.h"
 #include "imgui.h"
 #include "glm/vec2.hpp"
-#include "Viewport.h"
+#include "Viewport/Viewport.h"
 #include "Renderer/Buffers/FrameBuffer.h"
+#include "Viewport/Windows/DockableEditorWindow.h"
 
 namespace HC {
     class DefaultAttachableIMGUIWindow: public AttachableIMGUIWindow {
@@ -20,19 +21,11 @@ namespace HC {
         void SaveCurrentSceneToJson(const std::string& path);
         void LoadSceneFromJson(const std::string& path);
     private:
-        ImGuiID dock_main_id;
-        ImGuiID dock_left;
-        ImGuiID dock_right;
-        ImGuiID dock_bottom;
         glm::vec2 lastViewportSize;
-
         GLuint renderTextureId;
-        int currentFPS = 0;
-        int FPSupdateCounter = 0;
-        const int FPSupdateRate = 100;
 
-        bool bWindowStateDirty = true;
-
+        std::unordered_map<ImGuiDir_, ImGuiID> dockIds;
+        std::vector<std::unique_ptr<Editor::Window::DockableEditorWindow>> windows;
         void OnWindowResize(const glm::vec2& size);
     };
 }

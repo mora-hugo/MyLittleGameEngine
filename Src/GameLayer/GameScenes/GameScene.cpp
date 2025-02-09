@@ -29,7 +29,7 @@ void HC::GameScene::BeginPlay() {
 
 
 
-
+/*
     // ------------
     auto entity = std::make_unique<Entity>("First cube");
     entity->AddComponent<TransformComponent>();
@@ -44,6 +44,7 @@ void HC::GameScene::BeginPlay() {
     entity->AddComponent(RendererComponent::StaticClass());
 
     AddEntity(std::move(entity));
+    */
 }
 
 void HC::GameScene::Update(float deltaTime) {

@@ -59,6 +59,13 @@ namespace HC {
             return {};
         }
 
+        static HCClass* GetClassFromName(const char* className) {
+            for(auto& [key, value] : derivedClasses) {
+                if(strcmp(key->GetClassName(), className) == 0) {
+                    return key;
+                }
+            }
+        }
     protected:
         static bool IsClassRegistered(HCClass* hcClass) {
             return derivedClasses.contains(hcClass);

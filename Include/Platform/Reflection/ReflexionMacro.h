@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Reflection/Property.h"
+#include "Reflection/HCClass.h"
 #include <map>
 
 
@@ -31,6 +32,6 @@
 #define STOP_REFLECTION() \
     };                    \
 public:                          \
-    [[nodiscard]] const std::map<const char*, Property>& GetMembers() const override { return members; } \
+    [[nodiscard]] std::map<const char*, Property>& GetMembers() override { return members; } \
 
 

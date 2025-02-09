@@ -17,7 +17,7 @@ namespace HC {
             this->name = name;
         }
 
-        std::string &GetName() {
+        std::string GetName() const{
             return name;
         }
 
@@ -90,8 +90,7 @@ namespace HC {
 
 
     private:
-        std::unordered_map<HCClass*, std::unique_ptr<Component>> components;
-
+        std::map<HCClass*, std::unique_ptr<Component>> components;
         std::string name;
     };
 }

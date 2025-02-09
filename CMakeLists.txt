@@ -28,6 +28,8 @@ target_compile_options(GameEngine PRIVATE -Wall -Wextra -Wpedantic -Wconversion 
 
 add_compile_definitions(HC_EDITOR)
 
+# link cpp libraries
+set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 #add the include directory to the project
 target_include_directories(GameEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include/GameLayer)

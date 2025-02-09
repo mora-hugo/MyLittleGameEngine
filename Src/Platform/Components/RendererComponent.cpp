@@ -14,6 +14,8 @@ HC::RendererComponent::RendererComponent() : Component() {
 }
 
 void HC::RendererComponent::Draw() {
+
+    transformComponent = GetEntity()->GetComponent<TransformComponent>();
     shaders->Bind();
     if (Renderer::IsProjectionMatrixDirty()) {
         shaders->SetUniformMatrix4fv(PROJECTION_MATRIX_LOCATION, Renderer::GetProjectionMatrix());
@@ -36,8 +38,6 @@ HC::RendererComponent::~RendererComponent() {
 }
 
 void HC::RendererComponent::InitializeData(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, std::shared_ptr<ShaderProgram> shaderProgram) {
-
-    transformComponent = GetEntity()->GetComponent<TransformComponent>();
 
     shaders = shaderProgram;
 
