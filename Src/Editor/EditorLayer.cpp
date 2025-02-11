@@ -9,6 +9,7 @@
 #include "Renderer/Renderer.h"
 #include "Viewport/InspectorProperties/DefaultInspectorProperties.h"
 #include "EditorCommands/EditorCommandManager.h"
+#include "Logger.h"
 
 
 HC::EditorLayer::EditorLayer() {
@@ -42,7 +43,7 @@ void HC::EditorLayer::BeginPlay() {
         //imGUIInterface->AttachIMGUIWindow(std::make_shared<SceneManagerWindow>());
     }
 
-    
+    Logger::Init();
 
 }
 
