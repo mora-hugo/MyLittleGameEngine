@@ -10,6 +10,7 @@ namespace HC {
         ~EntitySelector();
 
         static Entity * GetSelectedEntity() { return selectedEntity; }
+        static bool IsEntitySelected() { return selectedEntity != nullptr; }
         static void SetSelectedEntity(Entity * entity) { selectedEntity = entity; }
 
     private:

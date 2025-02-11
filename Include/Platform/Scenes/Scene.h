@@ -16,8 +16,12 @@ namespace HC {
         void AddEntity(std::unique_ptr<Entity> entity);
         void RemoveEntity(Entity* entity);
 
-        std::unordered_set<std::unique_ptr<Entity>>& GetEntities() {
-            return entities;
+        std::vector<std::unique_ptr<Entity>>& GetEntities() {
+            return rootEntity->GetChildrens();
+        }
+
+        std::unique_ptr<Entity>& GetRootEntity() {
+            return rootEntity;
         }
 
         std::string GetName() const {
@@ -25,7 +29,7 @@ namespace HC {
         }
 
     private:
-        std::unordered_set<std::unique_ptr<Entity>> entities;
+        std::unique_ptr<Entity> rootEntity;
         std::string name;
     };
 }

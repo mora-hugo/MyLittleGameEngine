@@ -4,48 +4,66 @@
 #include "Components/TransformComponent.h"
 #include "Scenes/SceneManager.h"
 #include "Viewport/EditorStates/EntitySelector.h"
+#include "EditorCommands/EditorCommand.h"
+#include "EditorCommands/EditorCommandManager.h"
 
 void HC::Editor::Window::Hierarchy::Draw() {
     ImGui::Begin(GetWindowName());
 
-    if (ImGui::Button("+")) {
-        CreateEntity(nullptr);
-    }
-
     if (SceneManager::GetInstance()->GetCurrentScene()) {
-        auto& entities = SceneManager::GetInstance()->GetCurrentScene()->GetEntities();
+        auto& rootEntity = SceneManager::GetInstance()->GetCurrentScene()->GetRootEntity();
         int j = 0;
 
-        for (int i = 0; i < entities.size(); i++) {
-            auto& entity = *std::next(entities.begin(), i);
+        rootEntity->ExecuteOnChildrensRecursive([&](Entity* entity, int depth) {
+            j++;
 
-            entity->ExecuteOnChildrensRecursive([&](Entity* entity, int depth) {
-                j++;
+            if(depth != 0) {
+                ImGui::Indent(depth * 10.0f);
+            }
+            ImGui::PushID(j);
 
-                if(depth != 0) {
-                    ImGui::Indent(depth * 10.0f);
-                }
-                ImGui::PushID(j);
+            bool isSelected = (EntitySelector::GetSelectedEntity() == entity);
 
-                bool isSelected = (EntitySelector::GetSelectedEntity() == entity);
+            if (ImGui::Selectable(entity->GetName().c_str(), isSelected)) {
+                EntitySelector::SetSelectedEntity(entity);
+            }
+            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                ImGui::SetDragDropPayload("ENTITY_DRAG_DROP", &entity, sizeof(Entity*)); // Stocke le pointeur
+                ImGui::Text("Move: %s", entity->GetName().c_str());
+                ImGui::EndDragDropSource();
+            }
 
-                if (ImGui::Selectable(entity->GetName().c_str(), isSelected)) {
-                    EntitySelector::SetSelectedEntity(entity);
-                }
+            if (ImGui::BeginDragDropTarget()) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_DRAG_DROP")) {
+                    Entity* droppedEntity = *(Entity**)payload->Data;
 
-                if (ImGui::BeginPopupContextItem()) {
-                    if (ImGui::MenuItem("Create Empty Child")) {
-                        CreateEntity(entity);
+                    if (droppedEntity != entity && droppedEntity->GetParent() != entity) {
+                        ImGui::SetTooltip("IsAncestor: %s", droppedEntity->IsAncestor(entity) ? "true" : "false");
+                        if(!droppedEntity->IsAncestor(entity)) {
+                            EditorCommandManager::EnqueueCommand(std::make_unique<ReparentEntityCommand>(droppedEntity, entity));
+                        }
+
                     }
-                    ImGui::EndPopup();
+                }
+                ImGui::EndDragDropTarget();
+            }
+
+            if (ImGui::BeginPopupContextItem()) {
+                if (ImGui::MenuItem("Create Empty Child")) {
+                    EditorCommandManager::EnqueueCommand(std::make_unique<AddEntityCommand>(entity));
                 }
 
-                ImGui::PopID();
-                if(depth != 0) {
-                    ImGui::Unindent(depth * 10.0f);
+                if (ImGui::MenuItem("Delete")) {
+                    EditorCommandManager::EnqueueCommand(std::make_unique<RemoveEntityCommand>(entity));
                 }
-            });
-        }
+                ImGui::EndPopup();
+            }
+
+            ImGui::PopID();
+            if(depth != 0) {
+                ImGui::Unindent(depth * 10.0f);
+            }
+        });
     }
 
     ImGui::End();
@@ -64,13 +82,4 @@ void HC::Editor::Window::Hierarchy::Initialize(ImGuiID dockId) {
     SetDockSize(0.15f);
 }
 
-void HC::Editor::Window::Hierarchy::CreateEntity(HC::Entity *parent) {
-    auto entity = std::make_unique<Entity>("New Entity");
-    entity->AddComponent<TransformComponent>();
-    if (parent) {
-        parent->AddChild(std::move(entity));
-    } else {
-        SceneManager::GetInstance()->GetCurrentScene()->AddEntity(std::move(entity));
-    }
-}
 

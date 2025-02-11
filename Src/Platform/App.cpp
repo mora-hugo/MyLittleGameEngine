@@ -12,7 +12,7 @@ int HC::App::Run() {
     gameLayer->BeginPlay();
     while (!window->ShouldClose()) {
         auto dt = CalculateDeltaTime();
-        glfwPollEvents();
+        window->PollEvents();
         inputManager->ProcessInput();
         gameLayer->Update(dt);
 

@@ -27,6 +27,7 @@ namespace HC {
         virtual int GetMouseButton(int key) const = 0;
         virtual bool ShouldClose() const = 0;
         virtual void SwapBuffers() const = 0;
+        virtual void PollEvents() = 0;
 
     protected:
         void SetWindowSize(const glm::uvec2 &size) { windowSize = size; }

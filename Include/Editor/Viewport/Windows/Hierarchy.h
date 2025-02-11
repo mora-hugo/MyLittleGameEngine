@@ -8,10 +8,10 @@ namespace HC::Editor::Window {
         Hierarchy();
         ~Hierarchy() = default;
 
-        void CreateEntity(Entity* parent = nullptr);
 
         void Initialize(ImGuiID dockId) override;
         void Draw() override;
+
 
         START_REFLECTION(Hierarchy, DockableEditorWindow)
         STOP_REFLECTION()

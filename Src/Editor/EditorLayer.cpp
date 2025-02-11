@@ -8,6 +8,8 @@
 #include "Window/GLFWWindow.h"
 #include "Renderer/Renderer.h"
 #include "Viewport/InspectorProperties/DefaultInspectorProperties.h"
+#include "EditorCommands/EditorCommandManager.h"
+
 
 HC::EditorLayer::EditorLayer() {
 
@@ -44,6 +46,9 @@ void HC::EditorLayer::BeginPlay() {
 }
 
 void HC::EditorLayer::Update(float deltaTime) {
+    while(Editor::EditorCommand* command = Editor::EditorCommandManager::DequeueCommand()) {
+        command->Execute();
+    }
     GameLayer::Update(deltaTime);
 }
 

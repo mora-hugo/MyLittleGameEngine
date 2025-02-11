@@ -159,8 +159,13 @@ namespace HC {
         imguiWindows.erase(imguiWindow);
     }
 
-
-
+    void GLFWWindow::PollEvents() {
+        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED)) {
+            glfwWaitEvents();
+        } else {
+            glfwPollEvents();
+        }
+    }
 
 
 #endif

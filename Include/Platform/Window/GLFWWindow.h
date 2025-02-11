@@ -30,6 +30,7 @@ namespace HC {
         [[nodiscard]] bool ShouldClose() const override;
 
         void SwapBuffers() const override;
+        void PollEvents() override;
 
 #if defined(HC_EDITOR)
         void ImGUIFrameBegin() override;

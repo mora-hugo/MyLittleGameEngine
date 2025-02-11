@@ -105,21 +105,45 @@ namespace HC {
             childrens.push_back(std::move(child));
         }
 
-        bool RemoveChild(Entity* child) {
+        std::unique_ptr<Entity> RemoveChild(Entity* child) {
             for (auto it = childrens.begin(); it != childrens.end(); ++it) {
                 if (it->get() == child) {
+                    auto removedChild = std::move(*it);
                     childrens.erase(it);
-                    return true;
+                    return removedChild;
                 }
             }
+            return nullptr;
+        }
 
-            for (auto& childEntity : childrens) {
-                if (childEntity->RemoveChild(child)) {
+        bool IsAncestor(Entity* potentialParent) {
+            Entity* current = potentialParent;
+            while (current) {
+                if (current == this) {
                     return true;
                 }
+                current = current->GetParent();
             }
-
             return false;
+        }
+
+        void Destroy() {
+            auto childrenToDestroy = std::move(childrens);
+            childrens.clear();
+
+            for (auto& child : childrenToDestroy) {
+                child->Destroy();
+            }
+
+            components.clear();
+
+            if (parent) {
+                parent->RemoveChild(this);
+            }
+        }
+
+        std::vector<std::unique_ptr<Entity>>& GetChildrens() {
+            return childrens;
         }
 
     private:
