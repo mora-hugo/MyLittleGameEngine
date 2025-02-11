@@ -21,7 +21,7 @@ add_executable(GameEngine ${SOURCES})
 #create a resources path for the project
 target_compile_definitions(GameEngine PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/Resources")
 
-target_compile_options(GameEngine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+#target_compile_options(GameEngine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
 
 #comment to disable the editor
 
@@ -29,7 +29,7 @@ target_compile_options(GameEngine PRIVATE -Wall -Wextra -Wpedantic -Wconversion 
 add_compile_definitions(HC_EDITOR)
 
 # link cpp libraries
-set(CMAKE_EXE_LINKER_FLAGS "-static")
+#set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 #add the include directory to the project
 target_include_directories(GameEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include/GameLayer)

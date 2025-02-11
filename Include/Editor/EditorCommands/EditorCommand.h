@@ -133,7 +133,10 @@ namespace HC::Editor {
 
         void Execute() override {
             auto sceneResource = ResourceManager::GetInstance()->Load<SceneResource>(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+            if(!sceneResource->rootEntity) return;
+            EntitySelector::SetSelectedEntity(nullptr);
             auto loadedScene = SceneManager::GetInstance()->ChangeScene(std::make_unique<GameScene>(std::move(sceneResource->rootEntity)));
+
             ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
         }
 
@@ -152,6 +155,7 @@ namespace HC::Editor {
             if(!entity || !entity->GetParent()) return;
 
             auto newEntity = entity->Clone();
+            EntitySelector::SetSelectedEntity(newEntity.get());
             entity->GetParent()->AddChild(std::move(newEntity));
         }
 

@@ -21,8 +21,9 @@ namespace HC {
         Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
 
-
-        SceneManager::GetInstance()->ChangeScene(std::move(std::make_unique<GameScene>("GameScene2")));
+        auto rootEntity = std::make_unique<Entity>();
+        rootEntity->SetName("Premiere scene wouhou");
+        SceneManager::GetInstance()->ChangeScene(std::move(std::make_unique<GameScene>(std::move(rootEntity))));
     }
 
     void GameLayer::Update(float deltaTime) {

@@ -66,27 +66,28 @@ namespace HC {
     private:
         void ComputeWorldPosition() {
             cachedWorldPosition = GetPosition();
-            auto parent = GetEntity()->GetParent();
+            Entity* parent = GetEntity()->GetParent();
             while (parent) {
                 auto parentTransform = parent->GetComponent<TransformComponent>();
                 if (parentTransform) {
-                    cachedWorldPosition = parentTransform->cachedWorldRotation * cachedWorldPosition;
-                    cachedWorldPosition += parentTransform->GetWorldPosition();
+                    /* Apply parent's world rotation and add parent's local position */
+                    cachedWorldPosition = parentTransform->cachedWorldRotation * cachedWorldPosition + parentTransform->GetPosition();
                 }
                 parent = parent->GetParent();
             }
         }
 
         void ComputeWorldRotation() {
-            cachedWorldRotation = rotation;
-            auto parent = GetEntity()->GetParent();
-            while (parent) {
-                auto parentTransform = parent->GetComponent<TransformComponent>();
+            glm::quat worldRot = rotation;
+            Entity* currentParent = GetEntity()->GetParent();
+            while (currentParent) {
+                auto parentTransform = currentParent->GetComponent<TransformComponent>();
                 if (parentTransform) {
-                    cachedWorldRotation = parentTransform->cachedWorldRotation * cachedWorldRotation;
+                    worldRot = parentTransform->rotation * worldRot;
                 }
-                parent = parent->GetParent();
+                currentParent = currentParent->GetParent();
             }
+            cachedWorldRotation = worldRot;
         }
 
         void ComputeWorldScale() {
