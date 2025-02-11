@@ -2,7 +2,13 @@
 #include "Components/RendererComponent.h"
 
 HC::Scene::Scene(const char *sceneName) : name(sceneName) {
-    rootEntity = std::make_unique<Entity>("Root");
+    auto rootName = std::string("Root (") + sceneName + ")";
+    rootEntity = std::make_unique<Entity>();
+    rootEntity->SetName(rootName);
+}
+
+HC::Scene::Scene(std::unique_ptr<Entity> rootEntity) : name(rootEntity->GetName()) {
+    this->rootEntity = std::move(rootEntity);
 }
 
 void HC::Scene::BeginPlay() {
@@ -11,9 +17,12 @@ void HC::Scene::BeginPlay() {
             comp->BeginPlay();
         });
     }, true);
+
+    bSceneInitialized = true;
 }
 
 void HC::Scene::Update(float deltaTime) {
+    if(!IsSceneInitialized()) return;
     rootEntity->ExecuteOnChildrensRecursive([deltaTime](Entity* entity, int depth) {
             entity->ExecuteOnComponents<Component>([deltaTime](Component* comp) {
                 comp->Update(deltaTime);
@@ -23,6 +32,7 @@ void HC::Scene::Update(float deltaTime) {
 }
 
 void HC::Scene::Draw() {
+    if(!IsSceneInitialized()) return;
     rootEntity->ExecuteOnChildrensRecursive([](Entity* entity, int depth) {
             entity->ExecuteOnComponents<RendererComponent>([](RendererComponent* renderer) {
                 renderer->Draw();
@@ -31,7 +41,7 @@ void HC::Scene::Draw() {
 }
 
 void HC::Scene::EndPlay() {
-
+        if(!IsSceneInitialized()) return;
         rootEntity->ExecuteOnChildrensRecursive([](Entity* entity, int depth) {
             entity->ExecuteOnComponents<Component>([](Component* comp) {
                 comp->EndPlay();
@@ -47,6 +57,8 @@ void HC::Scene::AddEntity(std::unique_ptr<Entity> entity) {
 }
 
 void HC::Scene::RemoveEntity(HC::Entity *entity) {
-    rootEntity->RemoveChild(entity);
+    entity->Destroy();
 }
+
+
 

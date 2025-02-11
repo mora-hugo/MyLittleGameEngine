@@ -1,9 +1,5 @@
 #include "GameScenes/GameScene.h"
-#include "Components/TransformComponent.h"
-#include "Components/RendererComponent.h"
 #include "Components/PlayerControllerComponent.h"
-#include "Utils/ShaderUtils.h"
-#include "Components/RotationComponent.h"
 #include "Components/CameraComponent.h"
 #include "App.h"
 #include "GLFW/glfw3.h"
@@ -12,6 +8,9 @@ HC::GameScene::GameScene(const char* name) : Scene(name) {
 
 }
 
+HC::GameScene::GameScene(std::unique_ptr<Entity> rootEntity) : Scene(std::move(rootEntity)) {
+
+}
 HC::GameScene::~GameScene() {
 
 }
@@ -45,10 +44,13 @@ void HC::GameScene::BeginPlay() {
 
     AddEntity(std::move(entity));
     */
+    Input::GetKeyboardEventPressed().AddListener(this, HC_BIND_MEMBER_FUNCTION_ARGS(&GameScene::OnKeyPressed, this, 1));
 }
 
 void HC::GameScene::Update(float deltaTime) {
     Scene::Update(deltaTime);
+
+
 }
 
 void HC::GameScene::Draw() {
@@ -58,3 +60,10 @@ void HC::GameScene::Draw() {
 void HC::GameScene::EndPlay() {
     Scene::EndPlay();
 }
+
+void HC::GameScene::OnKeyPressed(const HC::KeyboardInput &keyboardInput) {
+
+}
+
+
+

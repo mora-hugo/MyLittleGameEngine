@@ -31,7 +31,9 @@
 
 #define STOP_REFLECTION() \
     };                    \
-public:                          \
-    [[nodiscard]] std::map<const char*, Property>& GetMembers() override { return members; } \
+public:                   \
+                          \
+    [[nodiscard]] std::map<const char*, Property>& GetMutableMembers() override { return members; }                     \
+    [[nodiscard]] const std::map<const char*, Property>& GetMembers() const override { return members; } \
 
 

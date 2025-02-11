@@ -3,6 +3,10 @@
 #include "ECS/Entity.h"
 #include "Components/TransformComponent.h"
 #include "Viewport/EditorStates/EntitySelector.h"
+#include "Singleton.h"
+#include "Scenes/SceneResource.h"
+#include "Scenes/SceneManager.h"
+#include "GameScenes/GameScene.h"
 
 namespace HC::Editor {
     struct EditorCommand {
@@ -15,8 +19,10 @@ namespace HC::Editor {
         void Execute() override {
             if(!parent) return;
 
-            auto entity = std::make_unique<Entity>("New Entity");
+            auto entity = std::make_unique<Entity>();
+            entity->SetName("New Entity");
             entity->AddComponent<TransformComponent>();
+            EntitySelector::SetSelectedEntity(entity.get());
 
             parent->AddChild(std::move(entity));
         }
@@ -101,6 +107,60 @@ namespace HC::Editor {
     private:
         Entity *entity;
         Entity *newParent;
+    };
+
+    struct SaveCurrentSceneCommand : public EditorCommand {
+        explicit SaveCurrentSceneCommand(Scene* scene) : scene(scene) {}
+
+        void Execute() override {
+            auto scene = SceneManager::GetInstance()->GetCurrentScene();
+            auto sceneResource = ResourceManager::GetInstance()->Load<SceneResource>(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+            sceneResource->rawRootEntity = scene->GetRootEntity().get();
+            sceneResource->Save();
+            ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+
+        }
+
+        void Undo() override {
+
+        }
+    private:
+        Scene* scene;
+    };
+
+    struct LoadSceneCommand : public EditorCommand {
+        explicit LoadSceneCommand(Scene* scene) : scene(scene) {}
+
+        void Execute() override {
+            auto sceneResource = ResourceManager::GetInstance()->Load<SceneResource>(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+            auto loadedScene = SceneManager::GetInstance()->ChangeScene(std::make_unique<GameScene>(std::move(sceneResource->rootEntity)));
+            ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+        }
+
+        void Undo() override {
+
+        }
+
+    private:
+        Scene* scene;
+    };
+
+    struct DuplicateEntityCommand : public EditorCommand {
+        explicit DuplicateEntityCommand(Entity* entity) : entity(entity) {}
+
+        void Execute() override {
+            if(!entity || !entity->GetParent()) return;
+
+            auto newEntity = entity->Clone();
+            entity->GetParent()->AddChild(std::move(newEntity));
+        }
+
+        void Undo() override {
+
+        }
+
+    private:
+        Entity* entity;
     };
 }
 

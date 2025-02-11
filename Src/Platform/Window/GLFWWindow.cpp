@@ -92,13 +92,12 @@ namespace HC {
 
     void GLFWWindow::ImGUIRender() {
 
-            // Dessiner toutes les fenêtres ImGui attachées
             for(auto& imguiWindow : imguiWindows) {
                 imguiWindow->Draw();
             }
 
-            ImGui::Render(); // Terminer la frame
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // Rendre les données
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
     }

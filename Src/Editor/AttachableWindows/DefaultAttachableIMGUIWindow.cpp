@@ -12,6 +12,8 @@
 #include "Viewport/Windows/EditorWindow.h"
 #include "Utils/PtrUtils.h"
 #include "Viewport/Windows/GameView.h"
+#include "GameScenes/GameScene.h"
+#include "EditorCommands/EditorCommandManager.h"
 
 
 void HC::DefaultAttachableIMGUIWindow::Draw() {
@@ -45,10 +47,10 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Save Scene")) {
-                SaveCurrentSceneToJson(RESOURCES_PATH"/Scenes/Scene1.json");
+                SaveCurrentSceneToJson();
             }
             if (ImGui::MenuItem("Load Scene")) {
-                LoadSceneFromJson(RESOURCES_PATH"/Scenes/Scene1.json");
+                LoadSceneFromJson();
             }
             ImGui::EndMenu();
         }
@@ -129,10 +131,10 @@ HC::DefaultAttachableIMGUIWindow::DefaultAttachableIMGUIWindow(GLuint renderText
 void HC::DefaultAttachableIMGUIWindow::OnWindowResize(const glm::vec2 &size) {
 }
 
-void HC::DefaultAttachableIMGUIWindow::SaveCurrentSceneToJson(const std::string &path) {
-
+void HC::DefaultAttachableIMGUIWindow::SaveCurrentSceneToJson() {
+    Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::SaveCurrentSceneCommand>(SceneManager::GetInstance()->GetCurrentScene()));
 }
 
-void HC::DefaultAttachableIMGUIWindow::LoadSceneFromJson(const std::string &path) {
-
+void HC::DefaultAttachableIMGUIWindow::LoadSceneFromJson() {
+    Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::LoadSceneCommand>(SceneManager::GetInstance()->GetCurrentScene()));
 }

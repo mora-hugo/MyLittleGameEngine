@@ -42,14 +42,15 @@ void HC::EditorLayer::BeginPlay() {
         //imGUIInterface->AttachIMGUIWindow(std::make_shared<SceneManagerWindow>());
     }
 
+    
 
 }
 
 void HC::EditorLayer::Update(float deltaTime) {
+    GameLayer::Update(deltaTime);
     while(Editor::EditorCommand* command = Editor::EditorCommandManager::DequeueCommand()) {
         command->Execute();
     }
-    GameLayer::Update(deltaTime);
 }
 
 void HC::EditorLayer::Draw() {

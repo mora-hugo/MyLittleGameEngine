@@ -7,10 +7,10 @@
 #include "Assertion.h"
 
 namespace HC {
-    class Entity {
+    class Entity : public HCObject {
     public:
 
-        explicit Entity(const char* name) : name(name) { }
+        explicit Entity() { }
         virtual ~Entity() = default;
 
         void SetName(const std::string& name) {
@@ -86,6 +86,23 @@ namespace HC {
             }
         }
 
+
+        template <typename T, typename Func>
+        void ExecuteOnComponentsConst(const Func&& func) const{
+            std::vector<Component*> componentValues;
+            for (auto& [type, component] : components) {
+                componentValues.push_back(component.get());
+            }
+
+            for (auto& component : componentValues) {
+                if (!component) {
+                    return;
+                }
+                if (T* castedComponent = dynamic_cast<T*>(component)) {
+                    func(castedComponent);
+                }
+            }
+        }
         void ExecuteOnChildrens(std::function<void(Entity*, int depth)> func, bool includingSelf = true) {
             if (includingSelf) {
                 func(this, 0);
@@ -127,6 +144,14 @@ namespace HC {
             return false;
         }
 
+        bool HasChildren() {
+            return !childrens.empty();
+        }
+
+        int GetChildrenCount() {
+            return childrens.size();
+        }
+
         void Destroy() {
             auto childrenToDestroy = std::move(childrens);
             childrens.clear();
@@ -146,6 +171,51 @@ namespace HC {
             return childrens;
         }
 
+        nlohmann::json ToJson() const override {
+            nlohmann::json j;
+            j["name"] = name;
+            nlohmann::json componentsJson = nlohmann::json::array();
+            for (const auto& [cls, component] : components) {
+                nlohmann::json compJson;
+                compJson["class"] = component->Class()->GetClassName();
+                compJson["data"] = component->ToJson();
+                componentsJson.push_back(compJson);
+            }
+            j["components"] = componentsJson;
+            nlohmann::json childrenJson = nlohmann::json::array();
+            for (const auto& child : childrens) {
+                childrenJson.push_back(child->ToJson());
+            }
+            j["childrens"] = childrenJson;
+            return j;
+        }
+
+        void FromJson(const nlohmann::json &j) override {
+            name = j.at("name").get<std::string>();
+            components.clear();
+            for (const auto& compJson : j.at("components")) {
+                std::string compClassName = compJson.at("class").get<std::string>();
+                HCClass* compHCClass = HCClass::GetClassFromName(compClassName.c_str());
+                Component* comp = AddComponent(compHCClass);
+                comp->FromJson(compJson.at("data"));
+            }
+            childrens.clear();
+            if (j.contains("childrens")) {
+                for (const auto& childJson : j.at("childrens")) {
+                    std::unique_ptr<Entity> child = std::make_unique<Entity>();
+                    child->FromJson(childJson);
+                    AddChild(std::move(child));
+                }
+            }
+        }
+
+        std::unique_ptr<Entity> Clone() {
+            auto clone = std::make_unique<Entity>();
+            auto json = ToJson();
+            clone->FromJson(json);
+            return clone;
+        }
+
     private:
 
         void ExecuteWorkerRecursive(std::function<void(Entity*, int)> func, Entity* entity, int depth, bool includingSelf) {
@@ -159,7 +229,8 @@ namespace HC {
         }
 
 
-
+    START_REFLECTION(Entity)
+    STOP_REFLECTION()
 
     private:
         Entity* parent = nullptr;

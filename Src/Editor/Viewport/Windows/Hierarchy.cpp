@@ -38,7 +38,6 @@ void HC::Editor::Window::Hierarchy::Draw() {
                     Entity* droppedEntity = *(Entity**)payload->Data;
 
                     if (droppedEntity != entity && droppedEntity->GetParent() != entity) {
-                        ImGui::SetTooltip("IsAncestor: %s", droppedEntity->IsAncestor(entity) ? "true" : "false");
                         if(!droppedEntity->IsAncestor(entity)) {
                             EditorCommandManager::EnqueueCommand(std::make_unique<ReparentEntityCommand>(droppedEntity, entity));
                         }
@@ -53,8 +52,12 @@ void HC::Editor::Window::Hierarchy::Draw() {
                     EditorCommandManager::EnqueueCommand(std::make_unique<AddEntityCommand>(entity));
                 }
 
-                if (ImGui::MenuItem("Delete")) {
+                if (ImGui::MenuItem("Delete", nullptr, false, entity->GetParent() != nullptr)) {
                     EditorCommandManager::EnqueueCommand(std::make_unique<RemoveEntityCommand>(entity));
+                }
+
+                if (ImGui::MenuItem("Duplicate", nullptr, false, entity->GetParent() != nullptr)) {
+                    EditorCommandManager::EnqueueCommand(std::make_unique<DuplicateEntityCommand>(entity));
                 }
                 ImGui::EndPopup();
             }

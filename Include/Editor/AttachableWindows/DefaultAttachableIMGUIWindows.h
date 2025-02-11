@@ -18,8 +18,8 @@ namespace HC {
         void Draw() override;
 
     private:
-        void SaveCurrentSceneToJson(const std::string& path);
-        void LoadSceneFromJson(const std::string& path);
+        void SaveCurrentSceneToJson();
+        void LoadSceneFromJson();
     private:
         glm::vec2 lastViewportSize;
         GLuint renderTextureId;

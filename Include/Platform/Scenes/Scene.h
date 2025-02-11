@@ -5,7 +5,8 @@
 namespace HC {
     class Scene {
     public:
-        Scene(const char* sceneName);
+        explicit Scene(const char* sceneName);
+        explicit Scene(std::unique_ptr<Entity> rootEntity);
         virtual ~Scene() = default;
 
         virtual void BeginPlay();
@@ -27,9 +28,14 @@ namespace HC {
         std::string GetName() const {
             return name;
         }
-
+    private:
+        bool IsSceneInitialized() const {
+            return bSceneInitialized;
+        }
     private:
         std::unique_ptr<Entity> rootEntity;
         std::string name;
+
+        bool bSceneInitialized = false;
     };
 }
