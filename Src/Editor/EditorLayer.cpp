@@ -35,7 +35,9 @@ void HC::EditorLayer::BeginPlay() {
     if(imGUIInterface) {
         auto* glfwWindow = dynamic_cast<GLFWWindow*>(App::GetInstance()->GetWindow());
         if(glfwWindow) {
-            imGUIInterface->AttachIMGUIWindow(std::make_shared<DefaultAttachableIMGUIWindow>(frameBuffer->GetRenderTextureId()));
+            auto imguiwindow = std::make_shared<DefaultAttachableIMGUIWindow>(frameBuffer->GetRenderTextureId());
+            imGUIInterface->AttachIMGUIWindow(imguiwindow);
+            Viewport::SetDefaultAttachableIMGUIWindow(imguiwindow);
 
         }
     }

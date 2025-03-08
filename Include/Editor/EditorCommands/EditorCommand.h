@@ -13,8 +13,11 @@
 #include "Interface.h"
 #include "App.h"
 #include "AttachableWindows/DefaultAttachableIMGUIWindows.h"
+#include "Viewport/Windows/AssetWindows/AssetWindow.h"
 
-namespace HC::Editor {
+namespace HC {
+    class Asset;
+    namespace Editor {
     struct EditorCommand {
         virtual void Execute() = 0;
         virtual void Undo() = 0;
@@ -120,7 +123,7 @@ namespace HC::Editor {
 
         void Execute() override {
             auto scene = SceneManager::GetInstance()->GetCurrentScene();
-            auto sceneResource = ResourceManager::GetInstance()->Load<SceneResource>(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+            auto sceneResource = ResourceManager::GetInstance()->Load<SceneResource>(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".hcscene");
             sceneResource->rawRootEntity = scene->GetRootEntity().get();
             sceneResource->Save();
             ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".hcscene");
@@ -174,41 +177,56 @@ namespace HC::Editor {
     };
 
     template<typename T>
+    struct TemplatedAttachWindowCommand : public EditorCommand {
+        explicit TemplatedAttachWindowCommand()= default;
+        ~TemplatedAttachWindowCommand() = default;
+
+        void Execute() override {
+            Viewport::AttachWindow<T>();
+        }
+
+        void Undo() override {
+
+        }
+
+    private:
+    };
+
     struct AttachWindowCommand : public EditorCommand {
-        explicit AttachWindowCommand(DefaultAttachableIMGUIWindow* window) : window(window) {}
+        explicit AttachWindowCommand(HCClass* windowClass) : windowClass(windowClass) {}
         ~AttachWindowCommand() = default;
 
         void Execute() override {
-            window->AttachWindow<T>();
+            Viewport::AttachWindow(windowClass);
         }
 
         void Undo() override {
 
         }
 
-    private:
-        DefaultAttachableIMGUIWindow* window;
+    protected:
+        HCClass* windowClass;
     };
 
-    template<typename T>
-    struct DetachWindowCommand : public EditorCommand {
-        explicit DetachWindowCommand(std::shared_ptr<AttachableIMGUIWindow> window) : window(std::move(window)) {}
+    struct AttachAssetWindowCommand : public AttachWindowCommand {
+        explicit AttachAssetWindowCommand(HCClass* windowClass, std::shared_ptr<Asset> asset) : AttachWindowCommand(windowClass), asset(std::move(asset)) {}
+        virtual ~AttachAssetWindowCommand() = default;
 
         void Execute() override {
-            auto *imGUIInterface = Interface::GetInterface<IImGUIWindow>(App::GetInstance()->GetWindow());
-            if (!imGUIInterface) return;
-
-            imGUIInterface->DetachIMGUIWindow(window);
+            auto& windowRef = Viewport::AttachWindow(windowClass);
+            auto assetWindow = dynamic_cast<Window::AssetWindow*>(&windowRef);
+            if(assetWindow) {
+                assetWindow->SetAsset(asset);
+            }
         }
 
         void Undo() override {
 
         }
 
-        std::shared_ptr<AttachableIMGUIWindow> window;
-
     private:
+        std::shared_ptr<Asset> asset;
     };
-
+    }
 }
 

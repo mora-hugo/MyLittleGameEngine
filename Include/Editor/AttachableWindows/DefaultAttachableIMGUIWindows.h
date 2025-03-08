@@ -5,7 +5,6 @@
 #include "glad/glad.h"
 #include "imgui.h"
 #include "glm/vec2.hpp"
-#include "Viewport/Viewport.h"
 #include "Renderer/Buffers/FrameBuffer.h"
 #include "Viewport/Windows/DockableEditorWindow.h"
 
@@ -13,6 +12,7 @@ namespace HC {
     class DefaultAttachableIMGUIWindow: public AttachableIMGUIWindow {
     public:
          explicit DefaultAttachableIMGUIWindow(GLuint renderTexture);
+         ~DefaultAttachableIMGUIWindow() = default;
     public:
 
         void Draw() override;
@@ -26,6 +26,19 @@ namespace HC {
                 }), windows.end());
             });
             windows.push_back(std::move(window));
+        }
+
+        Editor::Window::DockableEditorWindow& AttachWindow(HCClass* windowClass) {
+            auto window= windowClass->CreateUniqueInstance<Editor::Window::DockableEditorWindow>();
+            window->Initialize(0);
+            window->OnWindowClosed.AddListener(this, [this, window = window.get()]() {
+                windows.erase(std::remove_if(windows.begin(), windows.end(), [window](const std::unique_ptr<Editor::Window::DockableEditorWindow>& windowPtr) {
+                    return windowPtr.get() == window;
+                }), windows.end());
+            });
+            windows.push_back(std::move(window));
+            auto rawPtr = window.get();
+            return *rawPtr;
         }
 
 

@@ -8,8 +8,9 @@
 namespace HC::Editor::Window {
     class DockableEditorWindow : public EditorWindow {
     public:
+        [[nodiscard]] virtual bool IsOpenAtStart() const { return true; }
         DockableEditorWindow();
-        ~DockableEditorWindow() = default;
+        ~DockableEditorWindow() override;
 
         virtual void Initialize(ImGuiID dockId);
 
@@ -24,6 +25,7 @@ namespace HC::Editor::Window {
 
 
         Event<> OnWindowClosed;
+
 
     protected:
         void SetDockDirection(ImGuiDir_ direction) {

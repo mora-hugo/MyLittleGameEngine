@@ -1,5 +1,7 @@
 #include "Viewport/Windows/AssetManagerWindow.h"
 #include "AssetManager/AssetManager.h"
+#include "Viewport/Windows/AssetWindows/AssetWindow.h"
+#include "EditorCommands/EditorCommandManager.h"
 
 HC::Editor::Window::AssetManagerWindow::AssetManagerWindow() {
 }
@@ -27,7 +29,11 @@ void HC::Editor::Window::AssetManagerWindow::Draw() {
                     ImGui::Text("UUID: %u", uuid);
                     ImGui::Text("Type: %s", clazz->GetClassName());
 
-                    if (ImGui::Button("Ouvrir")) {
+                    if (ImGui::Button("Edit")) {
+                        auto windowClass = AssetWindow::GetWindowClassFromAssetClass(clazz);
+                        if (windowClass) {
+                            Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::AttachAssetWindowCommand>(windowClass, asset));
+                        }
                     }
 
                     ImGui::TreePop();

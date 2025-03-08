@@ -52,10 +52,10 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
 
         if(ImGui::BeginMenu("Windows")) {
             if(ImGui::MenuItem("Scenes")) {
-                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::AttachWindowCommand<Editor::Window::SceneManagerWindow>>(this));
+                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::TemplatedAttachWindowCommand<Editor::Window::SceneManagerWindow>>());
             }
             if(ImGui::MenuItem("Assets Viewer")) {
-                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::AttachWindowCommand<Editor::Window::AssetManagerWindow>>(this));
+                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::TemplatedAttachWindowCommand<Editor::Window::AssetManagerWindow>>());
             }
             ImGui::EndMenu();
         }
@@ -91,6 +91,8 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
         for (auto& window : HCClass::GetDerivedClasses(Editor::Window::DockableEditorWindow::StaticClass())) {
             auto dockableWindow = PtrUtils::static_unique_pointer_cast<Editor::Window::DockableEditorWindow>(
                     window->CreateUniqueInstance());
+            if(!dockableWindow->IsOpenAtStart()) continue;
+
             if(dockableWindow->Class() == Editor::Window::GameView::StaticClass()) {
                 auto gameView = PtrUtils::static_unique_pointer_cast<Editor::Window::GameView>(
                         window->CreateUniqueInstance());
@@ -146,3 +148,4 @@ void HC::DefaultAttachableIMGUIWindow::LoadSceneFromJson() {
     Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::LoadSceneCommand>(SceneManager::GetInstance()->GetCurrentScene()));
 
 }
+

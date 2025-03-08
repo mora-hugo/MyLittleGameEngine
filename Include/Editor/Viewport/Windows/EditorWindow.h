@@ -11,7 +11,9 @@ namespace HC::Editor::Window {
     public:
         void SetWindowName(const char* name) { windowName = name; }
 
-        const char* GetWindowName() const { return windowName; }
+        const char * GetWindowName() const {
+            return windowName;
+        }
         virtual void Draw() = 0;
     private:
         const char* windowName;
