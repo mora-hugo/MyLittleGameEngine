@@ -9,6 +9,7 @@
 #include "Viewport/Windows/GameView.h"
 #include "EditorCommands/EditorCommandManager.h"
 #include "Viewport/Windows/SceneManagerWindow.h"
+#include "Viewport/Windows/AssetManagerWindow.h"
 void HC::DefaultAttachableIMGUIWindow::Draw() {
     static bool dockspaceOpen = true;
     static bool opt_fullscreen = true;
@@ -48,9 +49,13 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
             ImGui::EndMenu();
         }
 
-        if(ImGui::BeginMenu("Scenes")) {
-            if(ImGui::MenuItem("View scenes")) {
+
+        if(ImGui::BeginMenu("Windows")) {
+            if(ImGui::MenuItem("Scenes")) {
                 Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::AttachWindowCommand<Editor::Window::SceneManagerWindow>>(this));
+            }
+            if(ImGui::MenuItem("Assets Viewer")) {
+                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::AttachWindowCommand<Editor::Window::AssetManagerWindow>>(this));
             }
             ImGui::EndMenu();
         }

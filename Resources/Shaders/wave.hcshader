@@ -15,7 +15,6 @@ out vec2 TexCoord;
 void main() {
     vec3 pos = aPos;
 
-    // Génération d'ondes sinusoïdales basées sur la position + le temps
     float wave1 = sin(u_Time * 2.0 + aPos.x * 2.0) * 0.1;
     float wave2 = cos(u_Time * 1.5 + aPos.z * 2.0) * 0.1;
 
@@ -23,7 +22,6 @@ void main() {
 
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(pos, 1.0);
 
-    // Coordonnées UV pour effet visuel (si tu veux ajouter une texture plus tard)
     TexCoord = aPos.xz;
 }
 
