@@ -1,0 +1,32 @@
+
+/* ---- VERTEX SHADER ---- */
+
+#version 330 core
+
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aColor;
+
+uniform mat4 u_ProjectionMatrix;
+uniform mat4 u_ViewMatrix;
+uniform mat4 u_ModelMatrix;
+uniform float u_Time;
+
+out vec3 ourColor;
+
+void main() {
+    gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(aPos, 1.0);
+
+    // Modifier la couleur avec un effet sinusoïdal sur u_Time
+    float timeEffect = sin(u_Time) * 0.5 + 0.5; // Oscillation entre 0 et 1
+    ourColor = mix(aColor, vec3(1.0, 0.0, 0.0), timeEffect); // Interpolation entre la couleur d'origine et rouge
+}
+/* ---- FRAGMENT SHADER ---- */
+
+#version 330 core
+
+in vec3 ourColor;
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(ourColor, 1.0);
+}
