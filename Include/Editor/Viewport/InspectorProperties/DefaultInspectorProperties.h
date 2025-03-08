@@ -106,7 +106,7 @@ namespace HC::Editor {
             AssetOf *value = dynamic_cast<AssetOf *>(obj);
             if (value) {
                 HCClass *hcClass = value->assetHCClass;
-                auto selectedAsset = AssetManager::GetInstance()->GetLoadedAsset(value->assetUUID);
+                auto selectedAsset = AssetManager::GetInstance()->GetAsset(value->assetUUID);
                 if (selectedAsset) {
                     ImGui::Text("Current selected asset: %s", selectedAsset->Class()->GetClassName());
                 } else {
@@ -114,11 +114,11 @@ namespace HC::Editor {
                 }
 
                 if (hcClass) {
-                    auto assets = AssetManager::GetInstance()->GetLoadedAssetsUUIDByClass(hcClass);
+                    auto assets = AssetManager::GetInstance()->GetAssetsUUIDByClass(hcClass);
 
                     for (int i = 0; i < assets.size(); i++) {
                         auto assetUUID = assets[i];
-                        auto asset = AssetManager::GetInstance()->GetLoadedAsset(assetUUID);
+                        auto asset = AssetManager::GetInstance()->GetAsset(assetUUID);
                         if (asset) {
                             ImGui::PushID(i);
                             if (ImGui::Selectable(asset->GetAssetName().c_str())) {

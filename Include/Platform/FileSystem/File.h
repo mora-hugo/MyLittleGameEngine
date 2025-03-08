@@ -13,6 +13,7 @@ namespace HC::FileSystem {
     public:
         explicit File(const std::string& filePath);
 
+
         bool Exists() const;
         [[nodiscard]] std::vector<uint8_t> ReadBytes() const;
         void WriteBytes(const std::vector<uint8_t>& bytes) const;

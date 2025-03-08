@@ -31,13 +31,13 @@ namespace HC {
         std::shared_ptr<T> GetAsset() {
             if (!IsAssetLoaded()) return nullptr;
 
-            return AssetManager::GetInstance()->GetLoadedAsset<T>(assetUUID);
+            return AssetManager::GetInstance()->GetAsset<T>(assetUUID);
         }
 
         std::shared_ptr<Asset> GetAsset() {
             if (!IsAssetLoaded()) return nullptr;
 
-            return AssetManager::GetInstance()->GetLoadedAsset(assetUUID);
+            return AssetManager::GetInstance()->GetAsset(assetUUID);
         }
 
         bool IsAssetLoaded() {

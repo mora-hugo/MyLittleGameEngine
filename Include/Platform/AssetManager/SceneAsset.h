@@ -9,9 +9,9 @@ namespace HC {
         SceneAsset() = default;
         ~SceneAsset() = default;
 
-        void Load(const FileSystem::File &file) override {
-            Asset::Load(file);
-            sceneJson = nlohmann::json::parse(file.ReadBytes());
+        void Load() override {
+            sceneJson = nlohmann::json::parse(GetAssetFile().ReadBytes());
+            Asset::Load();
         }
 
         std::unique_ptr<Entity> GetRootEntity() {

@@ -40,7 +40,6 @@ void HC::EditorLayer::BeginPlay() {
         }
     }
 
-    Logger::Init();
 }
 
 

@@ -17,11 +17,11 @@ void HC::Editor::Window::AssetManagerWindow::Draw() {
     auto classes = HCClass::GetDerivedClasses(Asset::StaticClass());
 
     for (auto& clazz : classes) {
-        auto uuids = AssetManager::GetInstance()->GetLoadedAssetsUUIDByClass(clazz);
+        auto uuids = AssetManager::GetInstance()->GetAssetsUUIDByClass(clazz);
 
         if (ImGui::TreeNode(clazz->GetClassName())) {
             for (auto uuid : uuids) {
-                auto asset = AssetManager::GetInstance()->GetLoadedAsset<Asset>(uuid);
+                auto asset = AssetManager::GetInstance()->GetAsset<Asset>(uuid);
 
                 if (ImGui::TreeNode(asset->GetAssetName().c_str())) {
                     ImGui::Text("UUID: %u", uuid);

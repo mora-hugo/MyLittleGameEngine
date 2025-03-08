@@ -13,7 +13,7 @@ namespace HC {
     public:
 
 
-        std::shared_ptr<Asset> LoadAsset(const FileSystem::File& file) {
+        std::shared_ptr<Asset> StoreAssetInMemory(const FileSystem::File& file) {
 
             size_t hash = hasher(file.path);
             if (assets.find(hash) != assets.end()) {
@@ -29,7 +29,7 @@ namespace HC {
             auto asset = assetClass->CreateSharedInstance<Asset>();
 
 
-            asset->Load(file);
+            asset->AssignFile(file);
             assets[hash] = asset;
             assetsByClass[asset->Class()].push_back(hash);
 
@@ -37,7 +37,7 @@ namespace HC {
         }
 
         template<typename T>
-        std::shared_ptr<T> LoadAsset(const FileSystem::File& file) {
+        std::shared_ptr<T> StoreAssetInMemory(const FileSystem::File& file) {
             static_assert(std::is_base_of<Asset, T>::value, "T must inherit from Asset");
 
             size_t hash = hasher(file.path);
@@ -50,7 +50,7 @@ namespace HC {
                 return nullptr;
             }
 
-            asset->Load(file);
+            asset->AssignFile(file);
             assets[hash] = asset;
             assetsByClass[T::StaticClass()].push_back(hash);
 
@@ -58,26 +58,35 @@ namespace HC {
         }
 
         template<typename T>
-        std::shared_ptr<T> GetLoadedAsset(size_t assetUUID) {
+        std::shared_ptr<T> GetAsset(size_t assetUUID) {
             static_assert(std::is_base_of<Asset, T>::value, "T must inherit from Asset");
 
             if (assets.find(assetUUID) != assets.end()) {
-                return std::dynamic_pointer_cast<T>(assets[assetUUID]);
+                auto asset = assets[assetUUID];
+                if(!asset->IsAssetLoaded()) {
+                    asset->Load();
+                }
+
+                return std::dynamic_pointer_cast<T>(asset);
             }
 
             return nullptr;
         }
 
-        std::shared_ptr<Asset> GetLoadedAsset(size_t assetUUID) {
-
+        std::shared_ptr<Asset> GetAsset(size_t assetUUID) {
             if (assets.find(assetUUID) != assets.end()) {
-                return assets[assetUUID];
+                auto asset = assets[assetUUID];
+                if(!asset->IsAssetLoaded()) {
+                    asset->Load();
+                }
+
+                return asset;
             }
 
             return nullptr;
         }
 
-        std::vector<size_t> GetLoadedAssetsUUIDByClass(HCClass* hcClass) {
+        std::vector<size_t> GetAssetsUUIDByClass(HCClass* hcClass) {
             if (assetsByClass.find(hcClass) != assetsByClass.end()) {
                 return assetsByClass[hcClass];
             }
@@ -86,7 +95,7 @@ namespace HC {
         }
 
         template<typename T>
-        std::vector<size_t> GetLoadedAssetsUUIDByClass(){
+        std::vector<size_t> GetAssetsUUIDByClass(){
             if (assetsByClass.find(T::StaticClass()) != assetsByClass.end()) {
                 return assetsByClass[T::StaticClass()];
             }
@@ -95,8 +104,10 @@ namespace HC {
         }
 
         bool IsAssetLoaded(size_t assetUUID) {
-            return assets.find(assetUUID) != assets.end();
+            auto asset = GetAsset(assetUUID);
+            return asset && asset->IsAssetLoaded();
         }
+
     private:
         std::unordered_map<size_t, std::shared_ptr<Asset>> assets;
 

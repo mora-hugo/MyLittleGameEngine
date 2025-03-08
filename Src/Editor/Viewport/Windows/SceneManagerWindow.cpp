@@ -9,9 +9,9 @@ HC::Editor::Window::SceneManagerWindow::SceneManagerWindow() {
 
 void HC::Editor::Window::SceneManagerWindow::Draw() {
     BeginWindow();
-    auto uuids = AssetManager::GetInstance()->GetLoadedAssetsUUIDByClass<SceneAsset>();
+    auto uuids = AssetManager::GetInstance()->GetAssetsUUIDByClass<SceneAsset>();
     for (auto uuid : uuids) {
-        auto sceneAsset = AssetManager::GetInstance()->GetLoadedAsset<SceneAsset>(uuid);
+        auto sceneAsset = AssetManager::GetInstance()->GetAsset<SceneAsset>(uuid);
         if (ImGui::Button(sceneAsset->GetAssetName().c_str())) {
             SceneManager::GetInstance()->ChangeScene(std::make_unique<Scene>(sceneAsset->GetRootEntity()));
         }
