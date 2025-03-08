@@ -5,6 +5,7 @@ layout (location = 1) in vec3 aColor;
 uniform mat4 u_ProjectionMatrix;
 uniform mat4 u_ViewMatrix;
 uniform mat4 u_ModelMatrix;
+uniform float u_Time;
 out vec3 ourColor;
 void main() {
 

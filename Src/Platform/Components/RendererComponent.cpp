@@ -5,6 +5,7 @@
 #include "Components/CameraComponent.h"
 #include "ECS/Entity.h"
 #include "Utils/ShaderUtils.h"
+#include "Utils/Time.h"
 
 
 HC::RendererComponent::RendererComponent() : Component() {
@@ -120,4 +121,13 @@ void HC::RendererComponent::InitializeShader() {
     shaders->SetUniformMatrix4fv(VIEW_MATRIX_LOCATION, Renderer::GetViewMatrix());
 
     shaders->Unbind();
+}
+
+void HC::RendererComponent::Update(float deltaTime) {
+    Component::Update(deltaTime);
+    if(shaders) {
+        shaders->Bind();
+        shaders->SetUniform1f(TIME_MATRIX_LOCATION, Time::GetAppTime());
+        shaders->Unbind();
+    }
 }

@@ -19,9 +19,18 @@ namespace HC {
             return 1.0f / smoothedDeltaTime;
         }
 
+        static void IncrementAppTime() {
+            appTime += deltaTime;
+        }
+
         static void SetDeltaTime(float newDeltaTime) {
             deltaTime = newDeltaTime;
             ComputeSmoothDeltaTime();
+            IncrementAppTime();
+        }
+
+        static double GetAppTime() {
+            return appTime;
         }
 
 
@@ -34,5 +43,6 @@ namespace HC {
 
         static inline float smoothFactor = 0.9f;
         static inline float smoothedDeltaTime;
+        static inline double appTime = 0.0f;
     };
 }

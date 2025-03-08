@@ -19,6 +19,7 @@ namespace HC {
         RendererComponent();
         void Initialize() override;
         ~RendererComponent() override;
+        void Update(float deltaTime) override;
         virtual void Draw();
 
     private:
@@ -34,6 +35,8 @@ namespace HC {
         static constexpr const char* PROJECTION_MATRIX_LOCATION = "u_ProjectionMatrix";
         static constexpr const char* VIEW_MATRIX_LOCATION = "u_ViewMatrix";
         static constexpr const char* MODEL_MATRIX_LOCATION = "u_ModelMatrix";
+        static constexpr const char* TIME_MATRIX_LOCATION = "u_Time";
+        static constexpr const char* WORLD_POS_MATRIX_LOCATION = "u_WorldPos";
 
         AssetOf assetOf {ShaderAsset::StaticClass()};
 
