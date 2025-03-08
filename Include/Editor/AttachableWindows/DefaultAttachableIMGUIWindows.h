@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Window/AttachableIMGUIWindow.h"
-#include <string>
 #include "glad/glad.h"
 #include "imgui.h"
 #include "glm/vec2.hpp"
-#include "Renderer/Buffers/FrameBuffer.h"
 #include "Viewport/Windows/DockableEditorWindow.h"
 
 namespace HC {
+
+
     class DefaultAttachableIMGUIWindow: public AttachableIMGUIWindow {
     public:
          explicit DefaultAttachableIMGUIWindow(GLuint renderTexture);
@@ -28,6 +28,7 @@ namespace HC {
             windows.push_back(std::move(window));
         }
 
+
         Editor::Window::DockableEditorWindow& AttachWindow(HCClass* windowClass) {
             auto window= windowClass->CreateUniqueInstance<Editor::Window::DockableEditorWindow>();
             window->Initialize(0);
@@ -41,6 +42,11 @@ namespace HC {
             return *rawPtr;
         }
 
+        void DetachWindow(Editor::Window::DockableEditorWindow* window) {
+            windows.erase(std::remove_if(windows.begin(), windows.end(), [window](const std::unique_ptr<Editor::Window::DockableEditorWindow>& windowPtr) {
+                return windowPtr.get() == window;
+            }), windows.end());
+        }
 
 
     private:

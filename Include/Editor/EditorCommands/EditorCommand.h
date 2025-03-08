@@ -9,16 +9,18 @@
 #include "Scenes/SceneResource.h"
 #include "Scenes/SceneManager.h"
 #include "GameScenes/GameScene.h"
-#include "Window/IImGuiWindow.h"
-#include "Interface.h"
 #include "App.h"
-#include "AttachableWindows/DefaultAttachableIMGUIWindows.h"
 #include "Viewport/Windows/AssetWindows/AssetWindow.h"
+#include "Viewport/Viewport.h"
 
 namespace HC {
     class Asset;
     namespace Editor {
-    struct EditorCommand {
+        namespace Window {
+            class DockableEditorWindow;
+        }
+
+        struct EditorCommand {
         virtual void Execute() = 0;
         virtual void Undo() = 0;
     };
@@ -206,6 +208,22 @@ namespace HC {
 
     protected:
         HCClass* windowClass;
+    };
+
+    struct DetachWindowCommand : public EditorCommand {
+        explicit DetachWindowCommand(Window::DockableEditorWindow* window) : window(window) {}
+        virtual ~DetachWindowCommand() = default;
+
+        void Execute() override {
+            Viewport::DetachWindow(window);
+        }
+
+        void Undo() override {
+
+        }
+
+    protected:
+        Window::DockableEditorWindow* window;
     };
 
     struct AttachAssetWindowCommand : public AttachWindowCommand {

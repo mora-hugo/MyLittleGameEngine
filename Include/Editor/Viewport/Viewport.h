@@ -1,11 +1,14 @@
 #pragma once
 
 #include "glm/vec2.hpp"
-#include "Event/ReadOnlyEvent.h"
-#include "AttachableWindows/DefaultAttachableIMGUIWindows.h"
+#include "Reflection/HCClass.h"
 #include <memory>
+#include <AttachableWindows/DefaultAttachableIMGUIWindows.h>
+#include <Event/Event.h>
 
 namespace HC {
+    class DefaultAttachableIMGUIWindow;
+
     class Viewport {
     public:
 
@@ -32,6 +35,10 @@ namespace HC {
             if(defaultAttachableIMGUIWindow) {
                 return defaultAttachableIMGUIWindow->AttachWindow(windowClass);
             }
+        }
+
+        static void DetachWindow(Editor::Window::DockableEditorWindow* window) {
+              defaultAttachableIMGUIWindow->DetachWindow(window);
         }
 
 

@@ -8,6 +8,7 @@
 #include "Utils/PtrUtils.h"
 #include "Viewport/Windows/GameView.h"
 #include "EditorCommands/EditorCommandManager.h"
+#include "EditorCommands/EditorCommand.h"
 #include "Viewport/Windows/SceneManagerWindow.h"
 #include "Viewport/Windows/AssetManagerWindow.h"
 void HC::DefaultAttachableIMGUIWindow::Draw() {

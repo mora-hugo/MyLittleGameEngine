@@ -46,7 +46,7 @@ namespace HC {
             std::cerr << "OpenGL ERROR: Impossible to load opengl !" << std::endl;
         }
 
-        //glfwSwapInterval(1);
+        glfwSwapInterval(1);
         glfwSetWindowUserPointer(window, this);
 
     }
