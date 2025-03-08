@@ -4,6 +4,7 @@
 #include <chrono>
 #include "EditorLayer.h"
 #include "Inputs/InputManager.h"
+#include "FileSystem/FileSystem.h"
 
 namespace HC {
     class BaseWindow;
@@ -19,6 +20,7 @@ namespace HC {
 
         [[nodiscard]] BaseWindow* GetWindow() const { return window.get(); }
 
+        [[nodiscard]] FileSystem::FileSystem& GetFileSystem() { return fileSystem; }
     private:
         std::unique_ptr<BaseWindow> window;
 #if defined(HC_EDITOR)
@@ -31,6 +33,8 @@ namespace HC {
         /* Delta time */
         std::chrono::time_point<std::chrono::steady_clock> currentTime;
         std::chrono::time_point<std::chrono::steady_clock> previousTime;
+
+        FileSystem::FileSystem fileSystem;
 
 
         void CreateWindow(const glm::ivec2 &windowSize, const std::string &windowName);

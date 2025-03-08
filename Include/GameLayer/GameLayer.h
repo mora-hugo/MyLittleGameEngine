@@ -16,11 +16,13 @@ namespace HC {
         virtual void Draw();
         virtual void EndPlay();
 
+
+
         [[nodiscard]] glm::vec2 GetWindowSize() const;
 
 
     private:
-
+        void LoadAllAssets();
 
     };
 };

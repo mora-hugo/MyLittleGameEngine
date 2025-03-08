@@ -149,6 +149,15 @@ namespace HC {
     void GLFWWindow::SwapBuffers() const {
         glfwSwapBuffers(window);
     }
+
+    void GLFWWindow::PollEvents() {
+        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED)) {
+            glfwWaitEvents();
+        } else {
+            glfwPollEvents();
+        }
+    }
+
 #if defined(HC_EDITOR)
     void GLFWWindow::AttachIMGUIWindow(std::shared_ptr<AttachableIMGUIWindow> imguiWindow) {
         imguiWindows.insert(imguiWindow);
@@ -158,13 +167,7 @@ namespace HC {
         imguiWindows.erase(imguiWindow);
     }
 
-    void GLFWWindow::PollEvents() {
-        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED)) {
-            glfwWaitEvents();
-        } else {
-            glfwPollEvents();
-        }
-    }
+
 
 
 #endif

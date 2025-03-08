@@ -15,6 +15,25 @@ HC::RendererComponent::RendererComponent() : Component() {
 
 void HC::RendererComponent::Draw() {
 
+    /* check if shader is assigned */
+    if(assetOf.IsDirty()) {
+
+        if(!assetOf.IsAssetLoaded()) {
+            return;
+        }
+
+        shaders = assetOf.GetAsset<ShaderAsset>()->GetShaderProgram();
+        if(!shaders) {
+            Logger::LogError("Shader not loaded");
+            return;
+        }
+        InitializeShader();
+    }
+
+    if(!shaders) {
+        return;
+    }
+
     transformComponent = GetEntity()->GetComponent<TransformComponent>();
     shaders->Bind();
     if (Renderer::IsProjectionMatrixDirty()) {
@@ -37,9 +56,8 @@ HC::RendererComponent::~RendererComponent() {
     ibo->Unbind();
 }
 
-void HC::RendererComponent::InitializeData(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, std::shared_ptr<ShaderProgram> shaderProgram) {
+void HC::RendererComponent::InitializeData(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices) {
 
-    shaders = shaderProgram;
 
     vao = std::make_unique<VertexArrayBuffer>();
     vao->Bind();
@@ -92,11 +110,10 @@ void HC::RendererComponent::Initialize() {
             4, 5, 1,  1, 0, 4
     };
 
-    auto shaderProgram = ShaderUtils::LoadShader(RESOURCES_PATH"/Shaders/vertex.glsl",
-                                                 RESOURCES_PATH"/Shaders/fragment.glsl");
+    InitializeData(vertices, indices);
+}
 
-    InitializeData(vertices, indices, shaderProgram);
-
+void HC::RendererComponent::InitializeShader() {
     shaders->Bind();
 
     shaders->SetUniformMatrix4fv(PROJECTION_MATRIX_LOCATION, Renderer::GetProjectionMatrix());

@@ -39,6 +39,7 @@ HC::App::App() {
     gameLayer = std::make_unique<GameLayer>();
 #endif
     inputManager = std::make_unique<InputManager>(*GetWindow());
+    fileSystem.Mount("Assets", RESOURCES_PATH);
     Input::Initialize(inputManager.get());
 }
 

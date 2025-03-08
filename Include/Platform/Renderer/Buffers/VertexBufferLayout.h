@@ -24,10 +24,7 @@ namespace HC {
     inline void VertexBufferLayout::Push<float>(GLuint count) {
         GLsizei offset = m_Stride;
         m_Elements.push_back({ GL_FLOAT, count, GL_FALSE, offset });
-
-
         m_Stride += count * sizeof(float);
-
     }
 
     template<>
@@ -35,8 +32,6 @@ namespace HC {
         GLsizei offset = m_Stride;
         m_Elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE, offset });
         m_Stride += count * sizeof(GLuint);
-
-
     }
 
     template<>
@@ -44,6 +39,5 @@ namespace HC {
         GLsizei offset = m_Stride;
         m_Elements.push_back({ GL_FLOAT, count, GL_FALSE, offset });
         m_Stride += count * sizeof(GLfloat);
-
     }
 }

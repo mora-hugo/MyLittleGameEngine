@@ -4,10 +4,12 @@
 HC::Scene::Scene(const char *sceneName) : name(sceneName) {
     auto rootName = std::string("Root (") + sceneName + ")";
     rootEntity = std::make_unique<Entity>();
+    rootEntity->AddComponent<TransformComponent>();
     rootEntity->SetName(rootName);
 }
 
 HC::Scene::Scene(std::unique_ptr<Entity> rootEntity) : name(rootEntity->GetName()) {
+    rootEntity->AddComponent<TransformComponent>();
     this->rootEntity = std::move(rootEntity);
 }
 

@@ -1,20 +1,13 @@
 #include "AttachableWindows/DefaultAttachableIMGUIWindows.h"
 #include "imgui.h"
-#include "Utils/Time.h"
 #include "imgui_internal.h"
 #include "Viewport/Viewport.h"
 #include "Scenes/SceneManager.h"
 #include "App.h"
-#include "Components/CameraComponent.h"
-#include "glm/gtc/type_ptr.hpp"
-#include "Scenes/SceneResource.h"
-#include "Components/TransformComponent.h"
 #include "Viewport/Windows/EditorWindow.h"
 #include "Utils/PtrUtils.h"
 #include "Viewport/Windows/GameView.h"
-#include "GameScenes/GameScene.h"
 #include "EditorCommands/EditorCommandManager.h"
-
 
 void HC::DefaultAttachableIMGUIWindow::Draw() {
     static bool dockspaceOpen = true;
@@ -84,9 +77,11 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
 
 
         for (auto& window : HCClass::GetDerivedClasses(Editor::Window::DockableEditorWindow::StaticClass())) {
-            auto dockableWindow = PtrUtils::static_unique_pointer_cast<Editor::Window::DockableEditorWindow>(window->CreateInstance());
+            auto dockableWindow = PtrUtils::static_unique_pointer_cast<Editor::Window::DockableEditorWindow>(
+                    window->CreateUniqueInstance());
             if(dockableWindow->Class() == Editor::Window::GameView::StaticClass()) {
-                auto gameView = PtrUtils::static_unique_pointer_cast<Editor::Window::GameView>(window->CreateInstance());
+                auto gameView = PtrUtils::static_unique_pointer_cast<Editor::Window::GameView>(
+                        window->CreateUniqueInstance());
                 gameView->SetRenderTexture(renderTextureId);
                 dockableWindow = std::move(gameView);
             }
@@ -137,4 +132,5 @@ void HC::DefaultAttachableIMGUIWindow::SaveCurrentSceneToJson() {
 
 void HC::DefaultAttachableIMGUIWindow::LoadSceneFromJson() {
     Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::LoadSceneCommand>(SceneManager::GetInstance()->GetCurrentScene()));
+
 }

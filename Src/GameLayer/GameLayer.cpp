@@ -9,6 +9,8 @@
 #include "AttachableWindows/SceneManagerWindow.h"
 #include "Singleton.h"
 #include "Scenes/SceneManager.h"
+#include "AssetManager/AssetManager.h"
+#include "AssetManager/ShaderAsset.h"
 #include "GameScenes/GameScene.h"
 
 
@@ -21,6 +23,7 @@ namespace HC {
         Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
 
+        LoadAllAssets();
         auto rootEntity = std::make_unique<Entity>();
         rootEntity->SetName("Premiere scene wouhou");
         SceneManager::GetInstance()->ChangeScene(std::move(std::make_unique<GameScene>(std::move(rootEntity))));
@@ -51,6 +54,9 @@ namespace HC {
         return App::GetInstance()->GetWindowSize();
     }
 
-
-
+    void GameLayer::LoadAllAssets() {
+        App::GetInstance()->GetFileSystem().ExecuteOnAllFilesRecursive([](const FileSystem::File &file, int depth) {
+            AssetManager::GetInstance()->LoadAsset(file);
+        });
+    }
 }

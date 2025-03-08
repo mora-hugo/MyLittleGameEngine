@@ -6,23 +6,42 @@
 #include <glm/glm.hpp>
 #include <stdint.h>
 #include <nlohmann/json.hpp>
+#include <typeindex>
+
 
 namespace HC {
-
+    class HCObject;
     struct Property {
-        Property(const char *propertyName, std::any propertyValue) : propertyName(propertyName),
-                                                                     propertyValue(std::move(propertyValue)) {}
+        Property(const char *propertyName, std::any propertyValue, const std::type_info& type) : propertyName(propertyName),
+                                                                     propertyValue(std::move(propertyValue)), realType(type) {}
+
 
         const char *propertyName;
         std::any propertyValue; // Properties are registered as ptr
+        const std::type_info& realType;
 
+        [[nodiscard]] std::type_index GetRealTypeIndex() const {
+            return (realType);
+        }
+
+        //TODO : HCObject can't be include (circular dependancy between HCObject and Property)
         template<typename T>
         const T *GetConstPropertyPtr() const {
+            if constexpr(std::is_base_of<HCObject, T>::value) {
+                auto val = std::any_cast<HCObject *>(propertyValue);
+                return dynamic_cast<T *>(val);
+            }
+
             return std::any_cast<T *>(propertyValue);
         }
 
         template<typename T>
         T *GetPropertyPtr() {
+            if constexpr(std::is_base_of<HCObject, T>::value) {
+                auto val = std::any_cast<HCObject *>(propertyValue);
+                return dynamic_cast<T *>(val);
+            }
+
             return std::any_cast<T *>(propertyValue);
         }
 
@@ -31,72 +50,9 @@ namespace HC {
             return propertyValue.type() == typeid(T *);
         }
 
-        [[nodiscard]] nlohmann::json ToJson() const {
-            nlohmann::json j;
-            j["propertyName"] = propertyName;
-            if (propertyValue.type() == typeid(int *)) {
-                int *value = std::any_cast<int *>(propertyValue);
-                j["propertyValue"] = *value;
-            } else if (propertyValue.type() == typeid(float *)) {
-                float *value = std::any_cast<float *>(propertyValue);
-                j["propertyValue"] = *value;
-            } else if (propertyValue.type() == typeid(double *)) {
-                double *value = std::any_cast<double *>(propertyValue);
-                j["propertyValue"] = *value;
-            } else if (propertyValue.type() == typeid(std::string *)) {
-                std::string *value = std::any_cast<std::string *>(propertyValue);
-                j["propertyValue"] = *value;
-            } else if (propertyValue.type() == typeid(glm::vec2 *)) {
-                glm::vec2 *value = std::any_cast<glm::vec2 *>(propertyValue);
-                j["propertyValue"] = {value->x, value->y};
-            } else if (propertyValue.type() == typeid(glm::vec3 *)) {
-                glm::vec3 *value = std::any_cast<glm::vec3 *>(propertyValue);
-                j["propertyValue"] = {value->x, value->y, value->z};
-            } else if (propertyValue.type() == typeid(glm::vec4 *)) {
-                glm::vec4 *value = std::any_cast<glm::vec4 *>(propertyValue);
-                j["propertyValue"] = {value->x, value->y, value->z, value->w};
-            } else {
-                /* Fallback for unsupported types */
-                j["propertyValue"] = nullptr;
-            }
-            return j;
-        }
+        [[nodiscard]] nlohmann::json ToJson() const;
 
-        void FromJson(const nlohmann::json &j) {
-            if (propertyValue.type() == typeid(int *)) {
-                int *value = std::any_cast<int *>(propertyValue);
-                *value = j.at("propertyValue").get<int>();
-            } else if (propertyValue.type() == typeid(float *)) {
-                float *value = std::any_cast<float *>(propertyValue);
-                *value = j.at("propertyValue").get<float>();
-            } else if (propertyValue.type() == typeid(double *)) {
-                double *value = std::any_cast<double *>(propertyValue);
-                *value = j.at("propertyValue").get<double>();
-            } else if (propertyValue.type() == typeid(std::string *)) {
-                std::string *value = std::any_cast<std::string *>(propertyValue);
-                *value = j.at("propertyValue").get<std::string>();
-            } else if (propertyValue.type() == typeid(glm::vec2 *)) {
-                glm::vec2 *value = std::any_cast<glm::vec2 *>(propertyValue);
-                auto arr = j.at("propertyValue");
-                value->x = arr[0].get<float>();
-                value->y = arr[1].get<float>();
-            } else if (propertyValue.type() == typeid(glm::vec3 *)) {
-                glm::vec3 *value = std::any_cast<glm::vec3 *>(propertyValue);
-                auto arr = j.at("propertyValue");
-                value->x = arr[0].get<float>();
-                value->y = arr[1].get<float>();
-                value->z = arr[2].get<float>();
-            } else if (propertyValue.type() == typeid(glm::vec4 *)) {
-                glm::vec4 *value = std::any_cast<glm::vec4 *>(propertyValue);
-                auto arr = j.at("propertyValue");
-                value->x = arr[0].get<float>();
-                value->y = arr[1].get<float>();
-                value->z = arr[2].get<float>();
-                value->w = arr[3].get<float>();
-            } else {
-                /* Fallback for unsupported types */
-            }
-        }
+        void FromJson(const nlohmann::json &j);
 
 
     };

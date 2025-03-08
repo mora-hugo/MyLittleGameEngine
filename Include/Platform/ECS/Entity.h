@@ -27,7 +27,7 @@ namespace HC {
         template <typename T>
         T* AddComponent() {
             auto type = T::StaticClass();
-            auto component = PtrUtils::static_unique_pointer_cast<T,HCObject>(T::StaticClass()->CreateInstance());
+            auto component = PtrUtils::static_unique_pointer_cast<T,HCObject>(T::StaticClass()->CreateUniqueInstance());
             Assertion(component != nullptr, "Template type is not a component");
             component->RegisterEntity(this);
             component->Initialize();
@@ -38,7 +38,8 @@ namespace HC {
         }
 
         Component* AddComponent(HCClass* componentClass) {
-            auto component = PtrUtils::static_unique_pointer_cast<Component,HCObject>(componentClass->CreateInstance());
+            auto component = PtrUtils::static_unique_pointer_cast<Component,HCObject>(
+                    componentClass->CreateUniqueInstance());
             Assertion(component != nullptr, "Template type is not a component");
             component->RegisterEntity(this);
             component->Initialize();

@@ -6,6 +6,7 @@
 #include "Reflection/ReflexionMacro.h"
 #include "typeindex"
 #include <iostream>
+
 #define INSPECTOR_PROPERTY_OF(type, inspectorClass) \
     static inline bool registered = (InspectorProperty::RegisterInspector<type>(StaticClass()), true);
 
@@ -20,7 +21,7 @@ namespace HC::Editor {
         }
 
         void SetProperty(Property& property) {
-            this->property = property;
+            this->property = &property;
 
         }
 
@@ -41,8 +42,8 @@ namespace HC::Editor {
 
 
         static HCClass* GetInspectorPropertyClass(const Property& property) {
-            if(inspectorClasses.contains(property.propertyValue.type())) {
-                return inspectorClasses[property.propertyValue.type()];
+            if(inspectorClasses.contains(property.GetRealTypeIndex())) {
+                return inspectorClasses[property.GetRealTypeIndex()];
             }
 
             return nullptr;
@@ -58,7 +59,7 @@ namespace HC::Editor {
         Event<> InternalOnValueChanged;
 
     protected:
-        Property property { "Property", nullptr };
+        Property* property;
 
         START_REFLECTION(InspectorProperty)
         STOP_REFLECTION()

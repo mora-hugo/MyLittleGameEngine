@@ -22,8 +22,40 @@ namespace HC {
 
         }
 
-        std::unique_ptr<HCObject> CreateInstance() {
+        template<typename T>
+        std::unique_ptr<T> CreateUniqueInstance() {
+            std::unique_ptr<HCObject> obj = CreateUniqueInstance();
+            return std::unique_ptr<T>(static_cast<T*>(obj.release()));
+        }
+
+        std::unique_ptr<HCObject> CreateUniqueInstance() {
             return createFunc();
+        }
+
+        template<typename T>
+        std::shared_ptr<T> CreateSharedInstance() {
+            std::shared_ptr<HCObject> obj = CreateSharedInstance();
+            return std::static_pointer_cast<T>(obj);
+        }
+
+        std::shared_ptr<HCObject> CreateSharedInstance() {
+            return std::shared_ptr<HCObject>(std::move(CreateUniqueInstance()));
+        }
+
+
+
+        template<typename T>
+        static std::unique_ptr<HCClass> RegisterClassWithCustomFunction(const char* className, HCClass* parent, CreateFunc func) {
+            auto classPtr = std::make_unique<HCClass>(className, parent, func);
+
+            derivedClasses.insert({classPtr.get(), std::vector<HCClass*>()});
+
+            if(IsClassRegistered(parent)) {
+                derivedClasses[parent].push_back(classPtr.get());
+            }
+
+            return std::move(classPtr);
+
         }
 
         template<typename T>
@@ -41,15 +73,7 @@ namespace HC {
                 };
             }
 
-            auto classPtr = std::make_unique<HCClass>(className, parent, func);
-
-            derivedClasses.insert({classPtr.get(), std::vector<HCClass*>()});
-
-            if(IsClassRegistered(parent)) {
-                derivedClasses[parent].push_back(classPtr.get());
-            }
-
-            return std::move(classPtr);
+            return RegisterClassWithCustomFunction<T>(className, parent, func);
     }
 
         [[nodiscard]] static std::vector<HCClass*> GetDerivedClasses(HCClass* parent) {

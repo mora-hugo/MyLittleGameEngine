@@ -4,6 +4,7 @@
 #include "GameLayer.h"
 #include "Renderer/Buffers/FrameBuffer.h"
 #include "Viewport/Viewport.h"
+#include "Singleton.h"
 
 namespace HC {
     class EditorLayer : public GameLayer {

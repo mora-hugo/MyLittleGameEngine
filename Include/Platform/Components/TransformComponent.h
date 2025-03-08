@@ -12,7 +12,7 @@ namespace HC {
     class TransformComponent : public Component {
     public:
         TransformComponent() : Component(), lastEulerAngles(0.0f) {}
-
+        ~TransformComponent() override = default;
         void Initialize() override {}
 
         void SetPosition(const glm::vec3 &newPosition) {
@@ -65,29 +65,35 @@ namespace HC {
 
     private:
         void ComputeWorldPosition() {
-            cachedWorldPosition = GetPosition();
-            Entity* parent = GetEntity()->GetParent();
-            while (parent) {
-                auto parentTransform = parent->GetComponent<TransformComponent>();
-                if (parentTransform) {
-                    /* Apply parent's world rotation and add parent's local position */
-                    cachedWorldPosition = parentTransform->cachedWorldRotation * cachedWorldPosition + parentTransform->GetPosition();
+            if (GetEntity()->GetParent()) {
+                auto parentTransform = GetEntity()->GetParent()->GetComponent<TransformComponent>();
+                if (!parentTransform) {
+                    cachedWorldPosition = position;
+                    return;
                 }
-                parent = parent->GetParent();
+
+                cachedWorldPosition = parentTransform->GetWorldPosition() +
+                                      parentTransform->cachedWorldRotation * (parentTransform->GetWorldScale() * position);
+            } else {
+                cachedWorldPosition = position;
             }
         }
 
+
         void ComputeWorldRotation() {
-            glm::quat worldRot = rotation;
-            Entity* currentParent = GetEntity()->GetParent();
-            while (currentParent) {
-                auto parentTransform = currentParent->GetComponent<TransformComponent>();
-                if (parentTransform) {
-                    worldRot = parentTransform->rotation * worldRot;
+            glm::quat worldRot = glm::normalize(rotation); // Assurer une rotation propre
+             if(GetEntity()->GetParent()) {
+                auto parentTransform = GetEntity()->GetParent()->GetComponent<TransformComponent>();
+                if(!parentTransform) {
+                    cachedWorldRotation = worldRot;
+                    return;
                 }
-                currentParent = currentParent->GetParent();
+                cachedWorldRotation = parentTransform->cachedWorldRotation * worldRot;
             }
-            cachedWorldRotation = worldRot;
+            else {
+                cachedWorldRotation = worldRot;
+            }
+
         }
 
         void ComputeWorldScale() {
@@ -126,10 +132,10 @@ namespace HC {
             return modelMatrix;
         }
 
-    START_REFLECTION(TransformComponent, Component)
-                        ADD_MEMBER_PROPERTY(position)
-                        ADD_MEMBER_PROPERTY(eulerAngles)
-                        ADD_MEMBER_PROPERTY(scale)
+        START_REFLECTION(TransformComponent, Component)
+            ADD_MEMBER_PROPERTY(position)
+            ADD_MEMBER_PROPERTY(eulerAngles)
+            ADD_MEMBER_PROPERTY(scale)
         STOP_REFLECTION()
     };
 }

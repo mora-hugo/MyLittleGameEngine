@@ -10,6 +10,7 @@ namespace HC {
     class RotationComponent : public Component {
     public:
         RotationComponent() : Component() {}
+        ~RotationComponent() override = default;
         void Initialize() override {
 
         }
