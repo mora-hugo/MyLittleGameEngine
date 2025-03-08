@@ -16,6 +16,19 @@ namespace HC {
     public:
 
         void Draw() override;
+        template<typename T>
+        void AttachWindow() {
+            auto window = std::make_unique<T>();
+            window->Initialize(0);
+            window->OnWindowClosed.AddListener(this, [this, window = window.get()]() {
+                windows.erase(std::remove_if(windows.begin(), windows.end(), [window](const std::unique_ptr<Editor::Window::DockableEditorWindow>& windowPtr) {
+                    return windowPtr.get() == window;
+                }), windows.end());
+            });
+            windows.push_back(std::move(window));
+        }
+
+
 
     private:
         void SaveCurrentSceneToJson();

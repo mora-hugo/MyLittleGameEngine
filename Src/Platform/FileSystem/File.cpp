@@ -5,7 +5,7 @@
 namespace HC::FileSystem {
 
     File::File(const std::string& filePath)
-            : path(filePath), name(fs::path(filePath).filename().string()), extension(fs::path(filePath).extension().string().substr(1)) {}
+            : path(filePath), name(fs::path(filePath).stem().string()), extension(fs::path(filePath).extension().string().substr(1)) {}
 
     bool File::Exists() const {
         return fs::exists(path) && fs::is_regular_file(path);
@@ -40,5 +40,9 @@ namespace HC::FileSystem {
         } else {
             Logger::LogError("Cannot delete \"{0}\" because it does not exist", path);
         }
+    }
+
+    std::string File::GetName() const {
+        return name;
     }
 }

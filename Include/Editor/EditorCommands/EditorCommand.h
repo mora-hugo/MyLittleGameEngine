@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "ECS/Entity.h"
 #include "Components/TransformComponent.h"
 #include "Viewport/EditorStates/EntitySelector.h"
@@ -7,6 +9,10 @@
 #include "Scenes/SceneResource.h"
 #include "Scenes/SceneManager.h"
 #include "GameScenes/GameScene.h"
+#include "Window/IImGuiWindow.h"
+#include "Interface.h"
+#include "App.h"
+#include "AttachableWindows/DefaultAttachableIMGUIWindows.h"
 
 namespace HC::Editor {
     struct EditorCommand {
@@ -117,7 +123,7 @@ namespace HC::Editor {
             auto sceneResource = ResourceManager::GetInstance()->Load<SceneResource>(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
             sceneResource->rawRootEntity = scene->GetRootEntity().get();
             sceneResource->Save();
-            ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+            ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".hcscene");
 
         }
 
@@ -137,7 +143,7 @@ namespace HC::Editor {
             EntitySelector::SetSelectedEntity(nullptr);
             auto loadedScene = SceneManager::GetInstance()->ChangeScene(std::make_unique<GameScene>(std::move(sceneResource->rootEntity)));
 
-            ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".json");
+            ResourceManager::GetInstance()->Unload(RESOURCES_PATH"/Scenes/" + std::string(scene->GetName()) + ".hcscene");
         }
 
         void Undo() override {
@@ -166,5 +172,43 @@ namespace HC::Editor {
     private:
         Entity* entity;
     };
+
+    template<typename T>
+    struct AttachWindowCommand : public EditorCommand {
+        explicit AttachWindowCommand(DefaultAttachableIMGUIWindow* window) : window(window) {}
+        ~AttachWindowCommand() = default;
+
+        void Execute() override {
+            window->AttachWindow<T>();
+        }
+
+        void Undo() override {
+
+        }
+
+    private:
+        DefaultAttachableIMGUIWindow* window;
+    };
+
+    template<typename T>
+    struct DetachWindowCommand : public EditorCommand {
+        explicit DetachWindowCommand(std::shared_ptr<AttachableIMGUIWindow> window) : window(std::move(window)) {}
+
+        void Execute() override {
+            auto *imGUIInterface = Interface::GetInterface<IImGUIWindow>(App::GetInstance()->GetWindow());
+            if (!imGUIInterface) return;
+
+            imGUIInterface->DetachIMGUIWindow(window);
+        }
+
+        void Undo() override {
+
+        }
+
+        std::shared_ptr<AttachableIMGUIWindow> window;
+
+    private:
+    };
+
 }
 

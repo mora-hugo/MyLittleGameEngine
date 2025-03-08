@@ -85,6 +85,15 @@ namespace HC {
             return {};
         }
 
+        template<typename T>
+        std::vector<size_t> GetLoadedAssetsUUIDByClass(){
+            if (assetsByClass.find(T::StaticClass()) != assetsByClass.end()) {
+                return assetsByClass[T::StaticClass()];
+            }
+
+            return {};
+        }
+
         bool IsAssetLoaded(size_t assetUUID) {
             return assets.find(assetUUID) != assets.end();
         }

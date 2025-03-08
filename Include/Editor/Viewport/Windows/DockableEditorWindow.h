@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Viewport/Windows/EditorWindow.h"
+#include "Event/Event.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 
@@ -19,6 +20,11 @@ namespace HC::Editor::Window {
         float GetDockSize() const {
             return dock_size;
         }
+
+
+
+        Event<> OnWindowClosed;
+
     protected:
         void SetDockDirection(ImGuiDir_ direction) {
             dock_direction = direction;
@@ -28,6 +34,17 @@ namespace HC::Editor::Window {
             dock_size = size;
         }
 
+        void BeginWindow(bool canBeClosed = true) {
+            bool open = true;
+            if (canBeClosed)
+                ImGui::Begin(GetWindowName(), &open);
+            else
+                ImGui::Begin(GetWindowName());
+
+            if (canBeClosed && !open) {
+                OnWindowClosed.Invoke();
+            }
+        }
 
     private:
         ImGuiID dockId = 0;

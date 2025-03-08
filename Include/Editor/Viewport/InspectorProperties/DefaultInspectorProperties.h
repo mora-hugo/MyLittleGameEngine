@@ -121,7 +121,7 @@ namespace HC::Editor {
                         auto asset = AssetManager::GetInstance()->GetLoadedAsset(assetUUID);
                         if (asset) {
                             ImGui::PushID(i);
-                            if (ImGui::Selectable(asset->Class()->GetClassName())) {
+                            if (ImGui::Selectable(asset->GetAssetName().c_str())) {
                                 value->assetUUID = assetUUID;
                                 value->isDirty = true;
                                 InternalOnValueChanged.Invoke();

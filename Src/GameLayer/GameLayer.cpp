@@ -1,13 +1,9 @@
 
-#include <iostream>
 #include "GameLayer.h"
 #include "App.h"
-#include "Interface.h"
-#include "Window/GLFWWindow.h"
+
 #include "Utils/Time.h"
 #include "Renderer/Renderer.h"
-#include "AttachableWindows/SceneManagerWindow.h"
-#include "Singleton.h"
 #include "Scenes/SceneManager.h"
 #include "AssetManager/AssetManager.h"
 #include "AssetManager/ShaderAsset.h"

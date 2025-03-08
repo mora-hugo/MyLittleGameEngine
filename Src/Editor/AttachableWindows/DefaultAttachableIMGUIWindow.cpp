@@ -8,7 +8,7 @@
 #include "Utils/PtrUtils.h"
 #include "Viewport/Windows/GameView.h"
 #include "EditorCommands/EditorCommandManager.h"
-
+#include "Viewport/Windows/SceneManagerWindow.h"
 void HC::DefaultAttachableIMGUIWindow::Draw() {
     static bool dockspaceOpen = true;
     static bool opt_fullscreen = true;
@@ -44,6 +44,13 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
             }
             if (ImGui::MenuItem("Load Scene")) {
                 LoadSceneFromJson();
+            }
+            ImGui::EndMenu();
+        }
+
+        if(ImGui::BeginMenu("Scenes")) {
+            if(ImGui::MenuItem("View scenes")) {
+                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::AttachWindowCommand<Editor::Window::SceneManagerWindow>>(this));
             }
             ImGui::EndMenu();
         }

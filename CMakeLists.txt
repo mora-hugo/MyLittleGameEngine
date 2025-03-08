@@ -25,8 +25,6 @@ target_compile_definitions(GameEngine PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOU
 target_compile_options(GameEngine PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
 
 #comment to disable the editor
-
-
 add_compile_definitions(HC_EDITOR)
 
 # link cpp libraries

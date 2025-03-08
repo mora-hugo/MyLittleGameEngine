@@ -13,6 +13,7 @@ namespace HC {
         ShaderAsset() = default;
         ~ShaderAsset() = default;
         void Load(const FileSystem::File &f) override {
+            Asset::Load(f);
             auto file = f.GetStream();
             if (!file.is_open()) {
                 Logger::LogError("Failed to open file: {0}", f.path);

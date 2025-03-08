@@ -15,7 +15,7 @@
 #include "Components/PlayerControllerComponent.h"
 #include "Components/RotationComponent.h"
 #include "Utils/ShaderUtils.h"
-#include "AttachableWindows/SceneManagerWindow.h"
+#include "Viewport/Windows/SceneManagerWindow.h"
 #include <iostream>
 
 HC::TestGameLayer::TestGameLayer() : GameLayer() {
