@@ -21,6 +21,8 @@ namespace HC {
         [[nodiscard]] BaseWindow* GetWindow() const { return window.get(); }
 
         [[nodiscard]] FileSystem::FileSystem& GetFileSystem() { return fileSystem; }
+        void LoadAllAssets();
+
     private:
         std::unique_ptr<BaseWindow> window;
 #if defined(HC_EDITOR)
@@ -35,6 +37,8 @@ namespace HC {
         std::chrono::time_point<std::chrono::steady_clock> previousTime;
 
         FileSystem::FileSystem fileSystem;
+
+
 
 
         void CreateWindow(const glm::ivec2 &windowSize, const std::string &windowName);

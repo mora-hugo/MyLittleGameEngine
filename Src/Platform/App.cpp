@@ -1,5 +1,7 @@
 #include <App.h>
 #include <iostream>
+#include <AssetManager/AssetManager.h>
+
 #include "Window/GLFWWindow.h"
 #include "ResourceManager.h"
 #include "TestGameLayer.h"
@@ -62,6 +64,12 @@ float HC::App::CalculateDeltaTime() {
 
 glm::vec2 HC::App::GetWindowSize() const {
     return window->GetWindowSize();
+}
+
+void HC::App::LoadAllAssets() {
+    GetFileSystem().ExecuteOnAllFilesRecursive([](const FileSystem::File &file, int depth) {
+            AssetManager::GetInstance()->StoreAssetInMemory(file);
+    });
 }
 
 

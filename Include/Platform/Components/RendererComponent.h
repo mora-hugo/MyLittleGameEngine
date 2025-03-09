@@ -11,6 +11,7 @@
 #include "AssetManager/AssetOf.h"
 #include "TransformComponent.h"
 #include "AssetManager/ShaderAsset.h"
+#include "AssetManager/TextureAsset.h"
 
 
 namespace HC {
@@ -39,9 +40,11 @@ namespace HC {
         static constexpr const char* WORLD_POS_MATRIX_LOCATION = "u_WorldPos";
 
         AssetOf assetOf {ShaderAsset::StaticClass()};
+        AssetOf textureAssetOf {TextureAsset::StaticClass()};
 
         START_REFLECTION(RendererComponent, Component)
             ADD_OBJECT_MEMBER_PROPERTY(assetOf)
+            ADD_OBJECT_MEMBER_PROPERTY(textureAssetOf)
         STOP_REFLECTION()
     };
 

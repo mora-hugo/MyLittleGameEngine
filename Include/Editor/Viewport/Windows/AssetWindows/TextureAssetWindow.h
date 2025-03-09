@@ -1,16 +1,15 @@
 #pragma once
 
 #include "Viewport/Windows/AssetWindows/AssetWindow.h"
-#include "AssetManager/ShaderAsset.h"
+#include "AssetManager/TextureAsset.h"
 namespace HC::Editor::Window {
-    class ShaderAssetWindow : public AssetWindow {
-public:
+    class TextureAssetWindow : public AssetWindow {
+    public:
     void Initialize(ImGuiID dockId) override;
     void Draw() override;
-
-    START_REFLECTION(ShaderAssetWindow, AssetWindow)
+    START_REFLECTION(TextureAssetWindow, AssetWindow)
     STOP_REFLECTION()
 
-    ASSET_WINDOW_OF(ShaderAsset)
+    ASSET_WINDOW_OF(TextureAsset)
     };
 }

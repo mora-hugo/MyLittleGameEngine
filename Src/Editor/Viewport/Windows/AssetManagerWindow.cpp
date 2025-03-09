@@ -18,6 +18,10 @@ void HC::Editor::Window::AssetManagerWindow::Draw() {
 
     auto classes = HCClass::GetDerivedClasses(Asset::StaticClass());
 
+    if (ImGui::Button("Refresh assets")) {
+        App::GetInstance()->LoadAllAssets();
+    }
+
     for (auto& clazz : classes) {
         auto uuids = AssetManager::GetInstance()->GetAssetsUUIDByClass(clazz);
 

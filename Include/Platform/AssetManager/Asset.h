@@ -2,13 +2,16 @@
 
 #include <string>
 #include <vector>
-#include <cstdint>
 #include "Reflection/HCObject.h"
 #include "Reflection/ReflexionMacro.h"
 #include "FileSystem/File.h"
 
+#define CONCAT(a, b) CONCAT_INNER(a, b)
+#define CONCAT_INNER(a, b) a##b
+
 #define ADD_ASSET_EXTENSION(extension) \
-    static inline bool registered = (RegisterExtension(#extension,StaticClass()), true);
+static inline bool CONCAT(registered_, __COUNTER__) = (RegisterExtension(#extension, StaticClass()), true);
+
 
 namespace HC {
 

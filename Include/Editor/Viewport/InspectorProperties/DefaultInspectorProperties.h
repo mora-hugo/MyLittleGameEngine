@@ -123,7 +123,7 @@ namespace HC::Editor {
                             ImGui::PushID(i);
                             if (ImGui::Selectable(asset->GetAssetName().c_str())) {
                                 value->assetUUID = assetUUID;
-                                value->isDirty = true;
+                                value->SetIsDirty(true);
                                 InternalOnValueChanged.Invoke();
                             }
                             ImGui::PopID();

@@ -11,8 +11,6 @@
 namespace HC {
     class AssetManager : public Singleton<AssetManager> {
     public:
-
-
         std::shared_ptr<Asset> StoreAssetInMemory(const FileSystem::File& file) {
 
             size_t hash = hasher(file.path);
@@ -58,12 +56,12 @@ namespace HC {
         }
 
         template<typename T>
-        std::shared_ptr<T> GetAsset(size_t assetUUID) {
+        std::shared_ptr<T> GetAsset(size_t assetUUID, bool autoLoad = true) {
             static_assert(std::is_base_of<Asset, T>::value, "T must inherit from Asset");
 
             if (assets.find(assetUUID) != assets.end()) {
                 auto asset = assets[assetUUID];
-                if(!asset->IsAssetLoaded()) {
+                if(autoLoad && !asset->IsAssetLoaded()) {
                     asset->Load();
                 }
 
@@ -73,10 +71,11 @@ namespace HC {
             return nullptr;
         }
 
-        std::shared_ptr<Asset> GetAsset(size_t assetUUID) {
+
+        std::shared_ptr<Asset> GetAsset(size_t assetUUID, bool autoLoad = true) {
             if (assets.find(assetUUID) != assets.end()) {
                 auto asset = assets[assetUUID];
-                if(!asset->IsAssetLoaded()) {
+                if(autoLoad && !asset->IsAssetLoaded()) {
                     asset->Load();
                 }
 
@@ -84,6 +83,15 @@ namespace HC {
             }
 
             return nullptr;
+        }
+
+        void LoadAsset(size_t assetUUID) {
+            if (assets.find(assetUUID) != assets.end()) {
+                auto asset = assets[assetUUID];
+                if(!asset->IsAssetLoaded()) {
+                    asset->Load();
+                }
+            }
         }
 
         std::vector<size_t> GetAssetsUUIDByClass(HCClass* hcClass) {
@@ -104,7 +112,7 @@ namespace HC {
         }
 
         bool IsAssetLoaded(size_t assetUUID) {
-            auto asset = GetAsset(assetUUID);
+            auto asset = GetAsset(assetUUID, false);
             return asset && asset->IsAssetLoaded();
         }
 

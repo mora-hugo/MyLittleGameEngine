@@ -19,9 +19,11 @@ void HC::RendererComponent::Draw() {
     /* check if shader is assigned */
     if(assetOf.IsDirty()) {
 
-        if(!assetOf.IsAssetLoaded()) {
+        if(!assetOf.IsAssetReferenced()) {
             return;
         }
+
+
 
         shaders = assetOf.GetAsset<ShaderAsset>()->GetShaderProgram();
         if(!shaders) {
@@ -29,6 +31,10 @@ void HC::RendererComponent::Draw() {
             return;
         }
         InitializeShader();
+    }
+
+    if (textureAssetOf.IsAssetReferenced()) {
+        textureAssetOf.GetAsset<TextureAsset>()->GetTexture().Bind();
     }
 
     if(!shaders) {
@@ -45,9 +51,11 @@ void HC::RendererComponent::Draw() {
         shaders->SetUniformMatrix4fv(VIEW_MATRIX_LOCATION, Renderer::GetViewMatrix());
     }
 
+
     shaders->SetUniformMatrix4fv(MODEL_MATRIX_LOCATION, transformComponent->GetModelMatrix());
 
     shaders->Unbind();
+
     Renderer::Draw(*vao, *ibo, *shaders);
 }
 
@@ -72,44 +80,69 @@ void HC::RendererComponent::InitializeData(const std::vector<Vertex> &vertices, 
     HC::VertexBufferLayout layout;
     layout.Push<float>(3); // Position
     layout.Push<float>(3); // Color
+    layout.Push<float>(2);
 
     vao->SetLayout(layout);
+
 }
 
 void HC::RendererComponent::Initialize() {
     std::vector<Vertex> vertices = {
-            // Face avant
-            {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}}, // 0
-            {{ 0.5f, -0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}}, // 1
-            {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}}, // 2
-            {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 0.0f}}, // 3
+        // positions             // couleurs         // UV
+        // Face avant
+        {{-0.5f, -0.5f,  0.5f},  {1,0,0},            {0,0}},
+        {{ 0.5f, -0.5f,  0.5f},  {1,0,0},            {1,0}},
+        {{ 0.5f,  0.5f,  0.5f},  {1,0,0},            {1,1}},
+        {{-0.5f,  0.5f,  0.5f},  {1,0,0},            {0,1}},
 
-            // Face arrière
-            {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}, // 4
-            {{ 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 1.0f}}, // 5
-            {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}}, // 6
-            {{-0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f}}  // 7
+        // Face arrière
+        {{ 0.5f, -0.5f, -0.5f},  {0,1,0},            {0,0}},
+        {{-0.5f, -0.5f, -0.5f},  {0,1,0},            {1,0}},
+        {{-0.5f,  0.5f, -0.5f},  {0,1,0},            {1,1}},
+        {{ 0.5f,  0.5f, -0.5f},  {0,1,0},            {0,1}},
+
+        // Face gauche
+        {{-0.5f, -0.5f, -0.5f},  {0,0,1},            {0,0}},
+        {{-0.5f, -0.5f,  0.5f},  {0,0,1},            {1,0}},
+        {{-0.5f,  0.5f,  0.5f},  {0,0,1},            {1,1}},
+        {{-0.5f,  0.5f, -0.5f},  {0,0,1},            {0,1}},
+
+        // Face droite
+        {{ 0.5f, -0.5f,  0.5f},  {1,1,0},            {0,0}},
+        {{ 0.5f, -0.5f, -0.5f},  {1,1,0},            {1,0}},
+        {{ 0.5f,  0.5f, -0.5f},  {1,0,1},            {1,1}},
+        {{ 0.5f,  0.5f,  0.5f},  {1,0,1},            {0,1}},
+
+        // Face dessus
+        {{-0.5f,  0.5f,  0.5f},  {0,1,1},            {0,0}},
+        {{ 0.5f,  0.5f,  0.5f},  {1,1,1},            {1,0}},
+        {{ 0.5f,  0.5f, -0.5f},  {1,0.5,0.5},        {1,1}},
+        {{-0.5f,  0.5f, -0.5f},  {0.5f,0.5f,0.5f},   {0,1}},
+
+        // Face dessous
+        {{-0.5f, -0.5f, -0.5f},  {0.5,0,0.5},        {0,0}},
+        {{ 0.5f, -0.5f, -0.5f},  {0,0.5,0.5},        {1,0}},
+        {{ 0.5f, -0.5f,  0.5f},  {0.5,0.5,0},        {1,1}},
+        {{-0.5f, -0.5f,  0.5f},  {0,0.5,0.5},        {0,1}},
     };
 
-    std::vector<unsigned int> indices = {
-            // Face avant
-            0, 1, 2,  2, 3, 0,
 
-            // Face arrière
-            4, 5, 6,  6, 7, 4,
 
-            // Face gauche
-            4, 0, 3,  3, 7, 4,
-
-            // Face droite
-            1, 5, 6,  6, 2, 1,
-
-            // Face haut
-            3, 2, 6,  6, 7, 3,
-
-            // Face bas
-            4, 5, 1,  1, 0, 4
+    std::vector<uint32_t> indices = {
+        /* Front face */
+        0, 1, 2, 2, 3, 0,
+        /* Back face */
+        4, 5, 6, 6, 7, 4,
+        /* Left face */
+        8, 9, 10, 10, 11, 8,
+        /* Right face */
+        12, 13, 14, 14, 15, 12,
+        /* Top face */
+        16, 17, 18, 18, 19, 16,
+        /* Bottom face */
+        20, 21, 22, 22, 23, 20
     };
+
 
     InitializeData(vertices, indices);
 }

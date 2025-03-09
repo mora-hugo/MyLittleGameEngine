@@ -22,7 +22,6 @@ namespace HC {
 
 
     private:
-        void LoadAllAssets();
 
     };
 };

@@ -17,7 +17,12 @@ set(CMAKE_CXX_STANDARD 20)
 # add source files
 file(GLOB_RECURSE SOURCES "Src/Platform/*.cpp" "Src/GameLayer/*.cpp", "Src/Editor/*.cpp" "Src/HCLogs/*.cpp")
 
-add_executable(GameEngine ${SOURCES})
+add_executable(GameEngine ${SOURCES}
+        Include/Platform/AssetManager/TextureAsset.h
+        Include/Platform/Renderer/Texture.h
+        Src/Platform/Renderer/Texture.cpp
+        Src/Editor/Viewport/Windows/AssetWindows/TextureAssetWindow.cpp
+)
 
 #create a resources path for the project
 target_compile_definitions(GameEngine PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/Resources")

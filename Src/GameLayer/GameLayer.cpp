@@ -21,7 +21,7 @@ namespace HC {
         Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
 
-        LoadAllAssets();
+        App::GetInstance()->LoadAllAssets();
         auto uuids = AssetManager::GetInstance()->GetAssetsUUIDByClass<SceneAsset>();
         if(uuids.empty()) {
             Logger::LogError("No scene found");
@@ -57,9 +57,5 @@ namespace HC {
         return App::GetInstance()->GetWindowSize();
     }
 
-    void GameLayer::LoadAllAssets() {
-        App::GetInstance()->GetFileSystem().ExecuteOnAllFilesRecursive([](const FileSystem::File &file, int depth) {
-            AssetManager::GetInstance()->StoreAssetInMemory(file);
-        });
-    }
+
 }

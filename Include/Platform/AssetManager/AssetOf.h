@@ -13,37 +13,60 @@ namespace HC {
     public:
         size_t assetUUID;
         HCClass* assetHCClass;
-        /* If the asset is dirty, it means that the asset has been modified and needs to be reloaded */
-        bool isDirty = false;
+
+        std::shared_ptr<Asset> cachedAsset;
 
         void OnDeserialized() override {
             isDirty = true;
         }
+
         bool IsDirty() {
             return isDirty;
         }
 
         void SetClean() {
-            isDirty = false;
+            SetIsDirty(false);
+        }
+
+        void SetIsDirty(bool isDirty) {
+            if (isDirty)
+                cachedAsset = nullptr;
+            this->isDirty = isDirty;
+
         }
 
         template<typename T>
         std::shared_ptr<T> GetAsset() {
-            if (!IsAssetLoaded()) return nullptr;
+            if (!IsAssetReferenced()) return nullptr;
 
-            return AssetManager::GetInstance()->GetAsset<T>(assetUUID);
+            auto asset = AssetManager::GetInstance()->GetAsset<T>(assetUUID);
+            cachedAsset = asset;
+            return asset;
         }
 
         std::shared_ptr<Asset> GetAsset() {
-            if (!IsAssetLoaded()) return nullptr;
+            if (!IsAssetReferenced()) return nullptr;
 
-            return AssetManager::GetInstance()->GetAsset(assetUUID);
+            auto asset = AssetManager::GetInstance()->GetAsset(assetUUID);
+            cachedAsset = asset;
+
+            return asset;
         }
 
+        void LoadAsset() {
+            cachedAsset = AssetManager::GetInstance()->GetAsset(assetUUID);
+        }
+
+        bool IsAssetReferenced() {
+            return assetUUID != 0;
+        }
         bool IsAssetLoaded() {
-            return assetUUID != 0 && AssetManager::GetInstance()->IsAssetLoaded(assetUUID);
+            return IsAssetReferenced() && (cachedAsset || AssetManager::GetInstance()->IsAssetLoaded(assetUUID));
         }
 
+    private:
+        /* If the asset is dirty, it means that the asset has been modified and needs to be reloaded */
+        bool isDirty = false;
         START_REFLECTION(AssetOf)
             ADD_MEMBER_PROPERTY(assetUUID)
             ADD_MEMBER_PROPERTY(assetHCClass)

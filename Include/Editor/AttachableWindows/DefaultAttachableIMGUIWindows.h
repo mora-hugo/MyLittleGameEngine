@@ -37,8 +37,8 @@ namespace HC {
                     return windowPtr.get() == window;
                 }), windows.end());
             });
-            windows.push_back(std::move(window));
             auto rawPtr = window.get();
+            windows.push_back(std::move(window));
             return *rawPtr;
         }
 
