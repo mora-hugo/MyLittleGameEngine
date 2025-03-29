@@ -18,6 +18,7 @@ namespace HC {
         void SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix);
         void SetUniform3fv(const std::string& name, const glm::vec3& vector);
         void SetUniform1f(const std::string& name, float value);
+        void SetUniform1i(const std::string& name, int value);
 
         bool IsBound() const;
         GLuint GetId() const;

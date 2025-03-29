@@ -64,7 +64,7 @@ namespace HC {
         }
 
         void RemoveComponent(HCClass* componentClass) {
-            auto it = components.find(componentClass);
+             auto it = components.find(componentClass);
             if (it != components.end()) {
                 components.erase(it);
             }

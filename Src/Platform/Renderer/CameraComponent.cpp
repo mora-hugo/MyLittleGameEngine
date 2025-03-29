@@ -1,6 +1,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "Components/CameraComponent.h"
+
+#include <Logger.h>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "ECS/Entity.h"
 #include "Components/TransformComponent.h"
 #include "Renderer/Renderer.h"
@@ -18,15 +22,20 @@ void HC::CameraComponent::Initialize() {
 
     aspectRatio = windowSize.x / windowSize.y;
     BindEvents();
+    cameraUniformBuffer = Renderer::GetUniformBuffer("Camera");
+    Assertion(cameraUniformBuffer != nullptr, "Camera uniform buffer not found");
 }
 
 void HC::CameraComponent::Update(float deltaTime) {
     Component::Update(deltaTime);
     Renderer::SetProjectionMatrix(GetProjectionMatrix());
     Renderer::SetViewMatrix(GetViewMatrix());
+    cameraUniformBuffer->SetData(glm::value_ptr(GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition()), sizeof(glm::vec3), 0);
+    Logger::LogInfo("Camera position is {} {} {}", GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition().x, GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition().y, GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition().z);
 }
 
 glm::mat4 HC::CameraComponent::GetViewMatrix() const {
+
     return glm::translate(glm::mat4(1.0f), GetEntity()->GetComponent<TransformComponent>()->GetPosition()) * glm::rotate(glm::mat4(1.0f), glm::radians(GetEntity()->GetComponent<TransformComponent>()->GetRotation().x), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(GetEntity()->GetComponent<TransformComponent>()->GetRotation().y), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(GetEntity()->GetComponent<TransformComponent>()->GetRotation().z), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 

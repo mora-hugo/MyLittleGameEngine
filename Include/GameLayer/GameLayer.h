@@ -1,5 +1,9 @@
 #pragma once
+#include <memory>
+
 #include "glm/vec2.hpp"
+#include "Renderer/Buffers/UniformBuffer.h"
+
 namespace HC {
     class GameLayer {
     public:
@@ -15,7 +19,6 @@ namespace HC {
         virtual void Update(float deltaTime);
         virtual void Draw();
         virtual void EndPlay();
-
 
 
         [[nodiscard]] glm::vec2 GetWindowSize() const;

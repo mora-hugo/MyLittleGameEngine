@@ -22,6 +22,13 @@ add_executable(GameEngine ${SOURCES}
         Include/Platform/Renderer/Texture.h
         Src/Platform/Renderer/Texture.cpp
         Src/Editor/Viewport/Windows/AssetWindows/TextureAssetWindow.cpp
+        Include/Platform/Properties/Color.h
+        Include/Platform/Renderer/Buffers/UniformBuffer.h
+        Src/Platform/Renderer/Buffers/UniformBuffer.cpp
+        Include/Editor/Viewport/Windows/SceneSettingsWindow.h
+        Src/Editor/Viewport/Windows/SceneSettingsWindow.cpp
+        Include/Editor/Viewport/InspectorProperties/ColorInspectorProperty.h
+        Include/Editor/Viewport/InspectorProperties/AssetOfInspectorProperty.h
 )
 
 #create a resources path for the project

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm/vec4.hpp>
+
+#include "Buffers/UniformBuffer.h"
 #include "Renderer/Shaders/ShaderProgram.h"
 #include "Renderer/Buffers/VertexArrayBuffer.h"
 #include "Renderer/Buffers/IndexBuffer.h"
@@ -32,9 +34,12 @@ namespace HC {
         static glm::mat4 GetProjectionMatrix() { return projectionMatrix; }
         static glm::mat4 GetViewMatrix() { return viewMatrix; }
 
+        static bool UniformBufferExists(const std::string& bufferName);
+        static UniformBuffer* GetUniformBuffer(const std::string& bufferName);
+        static void CreateUniformBuffer(const std::string& bufferName, size_t bufferSize, GLuint bindingPointIndex);
 
     private:
-
+        static inline std::unordered_map<std::string, std::unique_ptr<UniformBuffer>> uniformBuffers;
 
         static inline glm::mat4 projectionMatrix = glm::mat4(1.0f);
         static inline glm::mat4 viewMatrix = glm::mat4(1.0f);

@@ -1,5 +1,8 @@
 
 #include "GameLayer.h"
+
+#include <glm/gtc/type_ptr.inl>
+
 #include "App.h"
 
 #include "Utils/Time.h"
@@ -20,6 +23,10 @@ namespace HC {
         Renderer::SetViewport(0,0, GetWindowSize().x, GetWindowSize().y);
         Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
+        Renderer::CreateUniformBuffer("Lights", 2 * 16 + 16, 0);
+        Renderer::CreateUniformBuffer("Camera", 16, 1);
+        float defaultAmbientLighting = 0.1f;
+        Renderer::GetUniformBuffer("Lights")->SetData(&defaultAmbientLighting, 16, 0);
 
         App::GetInstance()->LoadAllAssets();
         auto uuids = AssetManager::GetInstance()->GetAssetsUUIDByClass<SceneAsset>();

@@ -40,6 +40,21 @@ void HC::Renderer::ResetMatrixDirtyFlags() {
     bViewMatrixDirty = false;
 }
 
+
+bool HC::Renderer::UniformBufferExists(const std::string &bufferName) {
+    return uniformBuffers.find(bufferName) != uniformBuffers.end();
+}
+
+HC::UniformBuffer * HC::Renderer::GetUniformBuffer(const std::string &bufferName) {
+    if (!UniformBufferExists(bufferName)) return nullptr;
+
+    return uniformBuffers[bufferName].get();
+}
+
+void HC::Renderer::CreateUniformBuffer(const std::string &bufferName, size_t bufferSize, GLuint bindingPointIndex) {
+    uniformBuffers[bufferName] = std::make_unique<UniformBuffer>(bufferSize, bindingPointIndex);
+}
+
 void HC::Renderer::SetDepthBufferEnabled(bool bEnabled) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);

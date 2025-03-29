@@ -12,14 +12,19 @@
 #include "TransformComponent.h"
 #include "AssetManager/ShaderAsset.h"
 #include "AssetManager/TextureAsset.h"
+#include "Properties/Color.h"
 
 
 namespace HC {
-    class RendererComponent : public Component {
+    class UniformBuffer;
+}
+
+namespace HC {
+    class LightSourceComponent : public Component {
     public:
-        RendererComponent();
+        LightSourceComponent();
         void Initialize() override;
-        ~RendererComponent() override;
+        ~LightSourceComponent() override;
         void Update(float deltaTime) override;
         void Draw() override;
 
@@ -30,6 +35,7 @@ namespace HC {
         std::unique_ptr<HC::IndexBuffer> ibo;
         std::unique_ptr<HC::VertexArrayBuffer> vao;
         std::shared_ptr<HC::ShaderProgram> shaders;
+        UniformBuffer* uniformBuffer;
 
         const TransformComponent* transformComponent;
 
@@ -39,12 +45,16 @@ namespace HC {
         static constexpr const char* TIME_MATRIX_LOCATION = "u_Time";
         static constexpr const char* WORLD_POS_MATRIX_LOCATION = "u_WorldPos";
 
-        AssetOf assetOf {ShaderAsset::StaticClass()};
-        AssetOf textureAssetOf {TextureAsset::StaticClass()};
+        static constexpr const char* LIGHT_COLOR_LOCATION = "objectColor";
+        static constexpr const char* LIGHT_SOURCE_COLOR_LOCATION = "lightColor";
 
-        START_REFLECTION(RendererComponent, Component)
-            ADD_OBJECT_MEMBER_PROPERTY(assetOf)
-            ADD_OBJECT_MEMBER_PROPERTY(textureAssetOf)
+
+        AssetOf lightShader {ShaderAsset::StaticClass()};
+        Color lightColor;
+
+        START_REFLECTION(LightSourceComponent, Component)
+            ADD_OBJECT_MEMBER_PROPERTY(lightShader)
+                ADD_OBJECT_MEMBER_PROPERTY(lightColor)
         STOP_REFLECTION()
     };
 

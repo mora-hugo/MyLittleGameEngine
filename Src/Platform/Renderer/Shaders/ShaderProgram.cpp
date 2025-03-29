@@ -61,6 +61,11 @@ void HC::ShaderProgram::SetUniform1f(const std::string &name, float value) {
     glUniform1f(GetUniformLocation(name), value);
 }
 
+void HC::ShaderProgram::SetUniform1i(const std::string &name, int value) {
+    Assertion(IsBound(), "Shader not bound");
+    glUniform1i(GetUniformLocation(name), value);
+}
+
 GLint HC::ShaderProgram::GetUniformLocation(const std::string& name) {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
         return m_UniformLocationCache[name];

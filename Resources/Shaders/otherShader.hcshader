@@ -6,6 +6,7 @@
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
+layout (location = 3) in vec3 aNormal;
 
 uniform mat4 u_ProjectionMatrix;
 uniform mat4 u_ViewMatrix;
@@ -13,6 +14,7 @@ uniform mat4 u_ModelMatrix;
 uniform float u_Time;
 
 out vec3 ourColor;
+out vec3 ourNormal;
 
 void main() {
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(aPos, 1.0);
@@ -20,6 +22,7 @@ void main() {
     // Modifier la couleur avec un effet sinusoïdal sur u_Time
     float timeEffect = sin(u_Time) * 0.5 + 0.5; // Oscillation entre 0 et 1
     ourColor = mix(aColor, vec3(1.0, 0.0, 0.0), timeEffect); // Interpolation entre la couleur d'origine et rouge
+    ourNormal = aNormal;
 }
 /* ---- FRAGMENT SHADER ---- */
 
@@ -27,6 +30,7 @@ void main() {
 
 in vec3 ourColor;
 out vec4 FragColor;
+in vec3 ourNormal;
 
 void main() {
     FragColor = vec4(ourColor, 1.0);
