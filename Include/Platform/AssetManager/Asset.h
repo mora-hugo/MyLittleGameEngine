@@ -70,5 +70,6 @@ namespace HC {
         std::unique_ptr<FileSystem::File> assetFile;
         bool isAssetLoaded = false;
 
+
     };
 }

@@ -8,6 +8,8 @@
 #include "Reflection/ReflexionMacro.h"
 #include "Reflection/IReflectable.h"
 namespace HC {
+    class UniformBuffer;
+
     class CameraComponent : public Component {
     private:
     public:
@@ -32,6 +34,7 @@ namespace HC {
         float fov = 45.0f;
         float nearPlane = 0.1f;
         float farPlane = 100.0f;
+        UniformBuffer* cameraUniformBuffer;
 
         glm::vec2 windowSize {0.0f, 0.0f};
 

@@ -11,6 +11,8 @@
 #include "EditorCommands/EditorCommand.h"
 #include "Viewport/Windows/SceneManagerWindow.h"
 #include "Viewport/Windows/AssetManagerWindow.h"
+#include "Viewport/Windows/SceneSettingsWindow.h"
+
 void HC::DefaultAttachableIMGUIWindow::Draw() {
     static bool dockspaceOpen = true;
     static bool opt_fullscreen = true;
@@ -55,9 +57,13 @@ void HC::DefaultAttachableIMGUIWindow::Draw() {
             if(ImGui::MenuItem("Scenes")) {
                 Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::TemplatedAttachWindowCommand<Editor::Window::SceneManagerWindow>>());
             }
+            if (ImGui::MenuItem("Scene settings")) {
+                Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::TemplatedAttachWindowCommand<Editor::Window::SceneSettingsWindow>>());
+            }
             if(ImGui::MenuItem("Assets Viewer")) {
                 Editor::EditorCommandManager::EnqueueCommand(std::make_unique<Editor::TemplatedAttachWindowCommand<Editor::Window::AssetManagerWindow>>());
             }
+
             ImGui::EndMenu();
         }
 

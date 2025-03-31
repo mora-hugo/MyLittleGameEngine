@@ -21,7 +21,7 @@ namespace HC {
         void Initialize() override;
         ~RendererComponent() override;
         void Update(float deltaTime) override;
-        virtual void Draw();
+        void Draw() override;
 
     private:
         void InitializeData(const std::vector<Vertex>& vertices = {}, const std::vector<unsigned int>& indices = {});

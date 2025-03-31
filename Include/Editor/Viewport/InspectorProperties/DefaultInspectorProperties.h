@@ -1,10 +1,13 @@
 #pragma once
 
 #include "Viewport/InspectorProperties/InspectorProperty.h"
-#include "AssetManager/AssetOf.h"
-#include "AssetManager/AssetManager.h"
+
 #include "imgui.h"
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Viewport/InspectorProperties/ColorInspectorProperty.h"
+#include "Viewport/InspectorProperties/AssetOfInspectorProperty.h"
+
 namespace HC::Editor {
     class IntInspectorProperty : public InspectorProperty{
     public:
@@ -96,47 +99,8 @@ namespace HC::Editor {
 
     };
 
-    class AssetOfProperty : public InspectorProperty {
-    public:
-        AssetOfProperty() = default;
-        ~AssetOfProperty() = default;
 
-        void Draw() override {
-            HCObject *obj = property->GetPropertyPtr<HCObject>();
-            AssetOf *value = dynamic_cast<AssetOf *>(obj);
-            if (value) {
-                HCClass *hcClass = value->assetHCClass;
-                auto selectedAsset = AssetManager::GetInstance()->GetAsset(value->assetUUID);
-                if (selectedAsset) {
-                    ImGui::Text("Current selected asset: %s", selectedAsset->Class()->GetClassName());
-                } else {
-                    ImGui::Text("No asset selected");
-                }
 
-                if (hcClass) {
-                    auto assets = AssetManager::GetInstance()->GetAssetsUUIDByClass(hcClass);
 
-                    for (int i = 0; i < assets.size(); i++) {
-                        auto assetUUID = assets[i];
-                        auto asset = AssetManager::GetInstance()->GetAsset(assetUUID);
-                        if (asset) {
-                            ImGui::PushID(i);
-                            if (ImGui::Selectable(asset->GetAssetName().c_str())) {
-                                value->assetUUID = assetUUID;
-                                value->SetIsDirty(true);
-                                InternalOnValueChanged.Invoke();
-                            }
-                            ImGui::PopID();
-                        }
-                    }
-                }
-            }
-        }
 
-        START_REFLECTION(AssetOfProperty, InspectorProperty)
-        STOP_REFLECTION()
-
-        INSPECTOR_PROPERTY_OF(AssetOf, AssetOfProperty)
-
-    };
 }

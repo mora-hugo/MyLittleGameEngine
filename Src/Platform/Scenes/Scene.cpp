@@ -36,7 +36,7 @@ void HC::Scene::Update(float deltaTime) {
 void HC::Scene::Draw() {
     if(!IsSceneInitialized()) return;
     rootEntity->ExecuteOnChildrensRecursive([](Entity* entity, int depth) {
-            entity->ExecuteOnComponents<RendererComponent>([](RendererComponent* renderer) {
+            entity->ExecuteOnComponents<Component>([](Component* renderer) {
                 renderer->Draw();
             });
         }, true);
