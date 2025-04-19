@@ -28,6 +28,7 @@ namespace HC::Editor {
 
                 ImGui::PushID(property->propertyName);
 
+
                 if (ImGui::BeginCombo("Assets", preview.c_str())) {
                     for (size_t i = 0; i < assets.size(); i++) {
                         auto assetUUID = assets[i];
@@ -47,7 +48,6 @@ namespace HC::Editor {
                     }
                     ImGui::EndCombo();
                 }
-
                 ImGui::PopID();
             }
         }

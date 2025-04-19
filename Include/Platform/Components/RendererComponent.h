@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <memory>
+#include <AssetManager/StaticMeshAsset.h>
+
 #include "ECS/Component.h"
 #include "Renderer/Vertex.h"
 #include "Renderer/Buffers/VertexBuffer.h"
@@ -41,10 +43,12 @@ namespace HC {
 
         AssetOf assetOf {ShaderAsset::StaticClass()};
         AssetOf textureAssetOf {TextureAsset::StaticClass()};
+        AssetOf staticMeshAssetOf {StaticMeshAsset::StaticClass()};
 
         START_REFLECTION(RendererComponent, Component)
             ADD_OBJECT_MEMBER_PROPERTY(assetOf)
             ADD_OBJECT_MEMBER_PROPERTY(textureAssetOf)
+            ADD_OBJECT_MEMBER_PROPERTY(staticMeshAssetOf)
         STOP_REFLECTION()
     };
 

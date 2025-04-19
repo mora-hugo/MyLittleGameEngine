@@ -161,5 +161,4 @@ void HC::LightSourceComponent::Update(float deltaTime) {
     Component::Update(deltaTime);
     uniformBuffer->SetData(glm::value_ptr(GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition()), sizeof(glm::vec3), 16);
     uniformBuffer->SetData(glm::value_ptr(lightColor.colorVec), sizeof(glm::vec3), 16 * 2);
-    Logger::LogInfo("Color is {} {} {}", lightColor.colorVec.x, lightColor.colorVec.y, lightColor.colorVec.z);
 }

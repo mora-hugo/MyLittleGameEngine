@@ -31,7 +31,6 @@ void HC::CameraComponent::Update(float deltaTime) {
     Renderer::SetProjectionMatrix(GetProjectionMatrix());
     Renderer::SetViewMatrix(GetViewMatrix());
     cameraUniformBuffer->SetData(glm::value_ptr(GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition()), sizeof(glm::vec3), 0);
-    Logger::LogInfo("Camera position is {} {} {}", GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition().x, GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition().y, GetEntity()->GetComponent<TransformComponent>()->GetWorldPosition().z);
 }
 
 glm::mat4 HC::CameraComponent::GetViewMatrix() const {

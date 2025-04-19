@@ -19,6 +19,13 @@ HC::RendererComponent::RendererComponent() : Component() {
 
 void HC::RendererComponent::Draw() {
 
+    if (staticMeshAssetOf.IsDirty() && staticMeshAssetOf.IsAssetReferenced()) {
+        std::vector<Vertex> vertices = staticMeshAssetOf.GetAsset<StaticMeshAsset>()->GetVertices();
+        std::vector<uint32_t> indices = staticMeshAssetOf.GetAsset<StaticMeshAsset>()->GetIndices();
+        InitializeData(vertices, indices);
+    }
+
+    if (!staticMeshAssetOf.IsAssetReferenced()) return;
     /* check if shader is assigned */
     if(assetOf.IsDirty()) {
 
@@ -152,7 +159,7 @@ void HC::RendererComponent::Initialize() {
 
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
-
+/*
     const unsigned int X_SEGMENTS = 32;
     const unsigned int Y_SEGMENTS = 16;
     const float PI = 3.14159265359f;
@@ -189,9 +196,9 @@ void HC::RendererComponent::Initialize() {
             indices.push_back(first + 1);
         }
     }
+    */
 
 
-    InitializeData(vertices, indices);
 }
 
 void HC::RendererComponent::InitializeShader() {

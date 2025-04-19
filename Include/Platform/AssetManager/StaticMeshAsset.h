@@ -17,6 +17,9 @@ namespace HC {
         ~StaticMeshAsset();
         void Load() override;
 
+
+    public:
+        std::vector<unsigned int> GetIndices();
         std::vector<Vertex> GetVertices();
 
     private:
@@ -25,8 +28,10 @@ namespace HC {
         STOP_REFLECTION()
 
         ADD_ASSET_EXTENSION(obj)
-        ADD_ASSET_EXTENSION(name)
-
+        ADD_ASSET_EXTENSION(fbx)
+    private:
+        std::vector<Vertex> m_Vertices;
+        std::vector<unsigned int> m_Indices;
         const aiScene *scene;
     };
 }
