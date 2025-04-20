@@ -26,12 +26,8 @@ namespace HC {
         void Draw() override;
 
     private:
-        void InitializeData(const std::vector<Vertex>& vertices = {}, const std::vector<unsigned int>& indices = {});
         void InitializeShader();
-        std::unique_ptr< HC::VertexBuffer> vbo;
-        std::unique_ptr<HC::IndexBuffer> ibo;
-        std::unique_ptr<HC::VertexArrayBuffer> vao;
-        std::shared_ptr<HC::ShaderProgram> shaders;
+
 
         const TransformComponent* transformComponent;
 
@@ -42,12 +38,10 @@ namespace HC {
         static constexpr const char* WORLD_POS_MATRIX_LOCATION = "u_WorldPos";
 
         AssetOf assetOf {ShaderAsset::StaticClass()};
-        AssetOf textureAssetOf {TextureAsset::StaticClass()};
         AssetOf staticMeshAssetOf {StaticMeshAsset::StaticClass()};
 
         START_REFLECTION(RendererComponent, Component)
             ADD_OBJECT_MEMBER_PROPERTY(assetOf)
-            ADD_OBJECT_MEMBER_PROPERTY(textureAssetOf)
             ADD_OBJECT_MEMBER_PROPERTY(staticMeshAssetOf)
         STOP_REFLECTION()
     };

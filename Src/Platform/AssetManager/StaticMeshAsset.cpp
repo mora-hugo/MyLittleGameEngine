@@ -14,75 +14,85 @@ void HC::StaticMeshAsset::Load() {
     auto fileData = GetAssetFile().ReadBytes();
 
     // Read file with appropriate post-processing flags
-    const aiScene* scene = importer.ReadFile(GetAssetFile().path,
-        aiProcess_Triangulate |
-        aiProcess_GenNormals |
-        aiProcess_FlipUVs |
-        aiProcess_JoinIdenticalVertices
-
-    );
+    const aiScene* scene = importer.ReadFile(GetAssetFile().path,aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         Logger::LogError("ERROR::ASSIMP:: {}", importer.GetErrorString());
         return;
     }
 
-    // Clear any existing data
-    m_Vertices.clear();
-    m_Indices.clear();
+    model = std::make_unique<Model>();
 
-    // Process all meshes in the scene
-    for(unsigned int i = 0; i < scene->mNumMeshes; i++) {
-        const aiMesh* mesh = scene->mMeshes[i];
-        const unsigned int vertexOffset = m_Vertices.size();
+    ProcessNode(scene->mRootNode, scene);
 
-        // Process vertices
-        for(unsigned int j = 0; j < mesh->mNumVertices; j++) {
-            Vertex vertex;
 
-            // Position
-            vertex.position = {
-                mesh->mVertices[j].x,
-                mesh->mVertices[j].y,
-                mesh->mVertices[j].z
-            };
+}
 
-            // Normals
-            if(mesh->HasNormals()) {
-                vertex.normal = {
-                    mesh->mNormals[j].x,
-                    mesh->mNormals[j].y,
-                    mesh->mNormals[j].z
-                };
-            }
-
-            // Texture Coordinates (first set only)
-            if(mesh->mTextureCoords[0]) {
-                vertex.texCoord = {
-                    mesh->mTextureCoords[0][j].x,
-                    mesh->mTextureCoords[0][j].y
-                };
-            } else {
-                vertex.texCoord = {0.0f, 0.0f};
-            }
-
-            m_Vertices.push_back(vertex);
-        }
-
-        // Process indices with correct offset
-        for(unsigned int j = 0; j < mesh->mNumFaces; j++) {
-            const aiFace& face = mesh->mFaces[j];
-            for(unsigned int k = 0; k < face.mNumIndices; k++) {
-                m_Indices.push_back(vertexOffset + face.mIndices[k]);
-            }
-        }
+void HC::StaticMeshAsset::ProcessNode(aiNode *node, const aiScene *scene) {
+    for(unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        model->AddMesh(ProcessMesh(mesh, scene));
+    }
+    for(unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        ProcessNode(node->mChildren[i], scene);
     }
 }
 
-std::vector<HC::Vertex> HC::StaticMeshAsset::GetVertices() {
-    return m_Vertices;
+std::unique_ptr<HC::Mesh> HC::StaticMeshAsset::ProcessMesh(const aiMesh *mesh, const aiScene *scene) {
+    // data to fill
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+    //vector<Texture> textures;
+
+    // walk through each of the mesh's vertices
+    for(unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
+        Vertex vertex;
+        glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        // positions
+        vector.x = mesh->mVertices[i].x;
+        vector.y = mesh->mVertices[i].y;
+        vector.z = mesh->mVertices[i].z;
+        vertex.position = vector;
+        // normals
+        if (mesh->HasNormals())
+        {
+            vector.x = mesh->mNormals[i].x;
+            vector.y = mesh->mNormals[i].y;
+            vector.z = mesh->mNormals[i].z;
+            vertex.normal = vector;
+        }
+        // texture coordinates
+        if(mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+        {
+            glm::vec2 vec;
+            // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+            // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+            vec.x = mesh->mTextureCoords[0][i].x;
+            vec.y = mesh->mTextureCoords[0][i].y;
+            vertex.texCoord = vec;
+
+        }
+        else
+            vertex.texCoord = glm::vec2(0.0f, 0.0f);
+
+        vertices.push_back(vertex);
+    }
+    // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+    for(unsigned int i = 0; i < mesh->mNumFaces; i++)
+    {
+        aiFace face = mesh->mFaces[i];
+        // retrieve all indices of the face and store them in the indices vector
+        for(unsigned int j = 0; j < face.mNumIndices; j++)
+            indices.push_back(face.mIndices[j]);
+    }
+
+    return std::make_unique<Mesh>(mesh->mName.C_Str(), vertices, indices);
 }
 
-std::vector<unsigned int> HC::StaticMeshAsset::GetIndices() {
-    return m_Indices;
+void HC::StaticMeshAsset::Draw(std::shared_ptr<ShaderProgram> shader) {
+    model->Draw(shader);
 }
+

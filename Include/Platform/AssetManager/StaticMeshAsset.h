@@ -1,6 +1,7 @@
 #pragma once
 #include "Asset.h"
 #include "assimp/scene.h"
+#include "Renderer/Model.h"
 
 namespace HC {
     struct Vertex;
@@ -17,11 +18,14 @@ namespace HC {
         ~StaticMeshAsset();
         void Load() override;
 
+        void Draw(std::shared_ptr<ShaderProgram> shader);
 
-    public:
-        std::vector<unsigned int> GetIndices();
-        std::vector<Vertex> GetVertices();
+    protected:
+        std::unique_ptr<Model> model;
 
+    private:
+        void ProcessNode(aiNode* node, const aiScene* scene);
+        std::unique_ptr<Mesh> ProcessMesh(const aiMesh* mesh, const aiScene* scene);
     private:
 
         START_REFLECTION(StaticMeshAsset, Asset)
@@ -30,8 +34,7 @@ namespace HC {
         ADD_ASSET_EXTENSION(obj)
         ADD_ASSET_EXTENSION(fbx)
     private:
-        std::vector<Vertex> m_Vertices;
-        std::vector<unsigned int> m_Indices;
+
         const aiScene *scene;
     };
 }
