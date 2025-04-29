@@ -1,6 +1,7 @@
 #include "FileSystem/File.h"
 #include "Logger.h"
 #include <fstream>
+#include <FileSystem/Directory.h>
 
 namespace HC::FileSystem {
 
@@ -40,6 +41,10 @@ namespace HC::FileSystem {
         } else {
             Logger::LogError("Cannot delete \"{0}\" because it does not exist", path);
         }
+    }
+
+    std::unique_ptr<Directory> File::GetDirectory() const {
+        return std::make_unique<Directory>(fs::path(path).parent_path().string());
     }
 
     std::string File::GetName() const {

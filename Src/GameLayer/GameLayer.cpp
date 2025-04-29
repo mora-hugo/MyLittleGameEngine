@@ -21,7 +21,7 @@ namespace HC {
         Logger::Init();
         Renderer::SetDepthBufferEnabled(true);
         Renderer::SetViewport(0,0, GetWindowSize().x, GetWindowSize().y);
-        Renderer::SetClearColor({0.0f, 0.0f, 0.0f, 1.0f});
+        Renderer::SetClearColor({1.0f, 0.0f, 0.0f, 1.0f});
 
         Renderer::CreateUniformBuffer("Lights", 2 * 16 + 16, 0);
         Renderer::CreateUniformBuffer("Camera", 16, 1);

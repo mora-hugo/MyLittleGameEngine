@@ -65,6 +65,7 @@ namespace HC {
         }
 
 
+
     private:
         static inline std::unordered_map<std::string, HCClass*> assetsExtensions;
         std::unique_ptr<FileSystem::File> assetFile;

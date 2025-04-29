@@ -10,9 +10,6 @@
 
 
 HC::RendererComponent::RendererComponent() : Component() {
-
-
-
 }
 
 void HC::RendererComponent::Draw() {
@@ -20,7 +17,6 @@ void HC::RendererComponent::Draw() {
     if (!staticMeshAssetOf.IsAssetReferenced() || !assetOf.IsAssetReferenced()) {
         return;
     }
-
 
     /* check if shader is assigned */
     if(assetOf.IsDirty()) {
@@ -51,9 +47,17 @@ void HC::RendererComponent::Draw() {
 
     shaders->SetUniformMatrix4fv(MODEL_MATRIX_LOCATION, transformComponent->GetModelMatrix());
 
+    if (assetOfTexture.IsAssetLoaded()) {
+        assetOfTexture.GetAsset<TextureAsset>()->GetTexture().Bind();
+    }
     shaders->Unbind();
 
+
+
+
     staticMeshAssetOf.GetAsset<StaticMeshAsset>()->Draw(shaders);
+
+    
 }
 
 HC::RendererComponent::~RendererComponent() {
@@ -77,11 +81,13 @@ void HC::RendererComponent::InitializeShader() {
 
 void HC::RendererComponent::Update(float deltaTime) {
     Component::Update(deltaTime);
+    /*
     auto shaders = assetOf.GetAsset<ShaderAsset>()->GetShaderProgram();
     if(shaders) {
         shaders->Bind();
         //shaders->SetUniform1f(TIME_MATRIX_LOCATION, Time::GetAppTime());
         shaders->Unbind();
     }
+    */
 
 }

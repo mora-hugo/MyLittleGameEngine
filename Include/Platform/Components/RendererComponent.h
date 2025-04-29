@@ -39,10 +39,12 @@ namespace HC {
 
         AssetOf assetOf {ShaderAsset::StaticClass()};
         AssetOf staticMeshAssetOf {StaticMeshAsset::StaticClass()};
+        AssetOf assetOfTexture {TextureAsset::StaticClass()};
 
         START_REFLECTION(RendererComponent, Component)
             ADD_OBJECT_MEMBER_PROPERTY(assetOf)
             ADD_OBJECT_MEMBER_PROPERTY(staticMeshAssetOf)
+                ADD_OBJECT_MEMBER_PROPERTY(assetOfTexture)
         STOP_REFLECTION()
     };
 

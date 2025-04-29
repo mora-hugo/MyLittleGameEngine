@@ -9,7 +9,8 @@ void HC::Model::Draw(std::shared_ptr<ShaderProgram> shader) {
         Logger::LogWarning("No meshes to draw");
         return;
     }
-    for (int i = 0; i < 5; i++) {
+
+    for (int i = 0; i < meshes.size(); i++) {
         meshes[i]->Draw(shader);
     }
 }

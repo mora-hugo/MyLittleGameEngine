@@ -86,13 +86,13 @@ vec4 specularLighting() {
 
 
 void main() {
-    vec4 texColor = texture(ourTexture, ourTexCoord);
+        vec4 texColor = texture(ourTexture, ourTexCoord);
         vec4 ambient = AmbientLighting();
         vec4 diffuse = diffuseLighting();
         vec4 specular = specularLighting();
 
         /* Combine ambient and diffuse with the texture, then add specular lighting */
-        FragColor = (ambient + diffuse  + specular ) * texColor;
+        FragColor = texColor;
 }
 
 

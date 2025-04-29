@@ -5,6 +5,10 @@
 #include <filesystem>
 #include <fstream>
 
+namespace HC::FileSystem {
+    class Directory;
+}
+
 namespace fs = std::filesystem;
 
 namespace HC::FileSystem {
@@ -15,13 +19,14 @@ namespace HC::FileSystem {
 
 
         bool Exists() const;
+
         [[nodiscard]] std::vector<uint8_t> ReadBytes() const;
         void WriteBytes(const std::vector<uint8_t>& bytes) const;
         [[nodiscard]] std::string GetName() const;
         [[nodiscard]] std::string GetExtension() const;
         void Remove() const;
         [[nodiscard]] std::ifstream GetStream() const { return std::ifstream(path, std::ios::binary); }
-
+        [[nodiscard]] std::unique_ptr<Directory> GetDirectory() const;
 
         std::string path, name, extension;
     };

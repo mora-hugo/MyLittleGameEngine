@@ -1,4 +1,7 @@
 #include "Renderer/Renderer.h"
+
+#include <Logger.h>
+
 #include "GLFW/glfw3.h"
 
 void HC::Renderer::Clear() {
